@@ -1,29 +1,21 @@
-package org.example.edufypodservice.entities;
+package org.example.edufypodservice.dto;
 
-import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class PodcastDto {
 
-@Entity
-public class Podcast {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "podcast_id")
     private UUID id;
-    @Column(length = 50, nullable = false)
     private String Name;
-    @Column(length = 500, nullable = false)
     private String description;
-    @OneToMany(mappedBy = "podcast", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<Episode> episodes = new ArrayList<>();
-    @ManyToMany(mappedBy = "podcasts",  fetch = FetchType.LAZY)
-    private List<Genre> genres = new ArrayList<>();
+    private List<EpisodeDto> episodes = new ArrayList<>();
+    private List<GenreDto> genres = new ArrayList<>();
 
-    public Podcast() {
-
+    public PodcastDto() {
     }
 
     public UUID getId() {
@@ -39,7 +31,7 @@ public class Podcast {
     }
 
     public void setName(String name) {
-        this.Name = name;
+        Name = name;
     }
 
     public String getDescription() {
@@ -50,28 +42,30 @@ public class Podcast {
         this.description = description;
     }
 
-    public List<Episode> getEpisodes() {
+    public List<EpisodeDto> getEpisodes() {
         return episodes;
     }
 
-    public void setEpisodes(List<Episode> episodes) {
+    public void setEpisodes(List<EpisodeDto> episodes) {
         this.episodes = episodes;
     }
 
-    public List<Genre> getGenres() {
+    public List<GenreDto> getGenres() {
         return genres;
     }
 
-    public void setGenres(List<Genre> genres) {
+    public void setGenres(List<GenreDto> genres) {
         this.genres = genres;
     }
 
     @Override
     public String toString() {
-        return "Podcast{" +
+        return "PodcastDto{" +
                 "id=" + id +
                 ", Name='" + Name + '\'' +
                 ", description='" + description + '\'' +
+                ", episodes=" + episodes +
+                ", genres=" + genres +
                 '}';
     }
 }
