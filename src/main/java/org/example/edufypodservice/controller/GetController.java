@@ -1,6 +1,8 @@
 package org.example.edufypodservice.controller;
 
 
+import org.example.edufypodservice.dto.EpisodeDto;
+import org.example.edufypodservice.dto.GenreDto;
 import org.example.edufypodservice.dto.PodcastDto;
 import org.example.edufypodservice.services.EpisodeServiceImpl;
 import org.example.edufypodservice.services.GenreServiceImpl;
@@ -28,23 +30,10 @@ public class GetController {
         this.episodeService = episodeService;
         this.genreService = genreService;
     }
-/*
-    List<GenreDto> getAllGenres();
-    GenreDto getGenreById(UUID id);
-
-    List<PodcastDto> getAllPodcasts();
-    PodcastDto getPodcastById(int id);
-    PodcastDto getPodcastByName(String podcastName);
-    List<PodcastDto> getPodcastsByGenre(String genre);
-
-  EpisodeDto getEpisode(UUID episodeId);
-    List<EpisodeDto> getAllEpisodes();
-    List<EpisodeDto> getEpisodesByPodcastId(UUID podcastId);
-  */
 
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @GetMapping("/getpodcast/{id}")
-    public ResponseEntity<PodcastDto> getPodcast(@PathVariable UUID id) {
+    public ResponseEntity<PodcastDto> getPodcastById(@PathVariable UUID id) {
         return ResponseEntity.ok(podcastService.getPodcastById(id));
     }
 
@@ -54,11 +43,49 @@ public class GetController {
         return ResponseEntity.ok(podcastService.getAllPodcasts());
     }
 
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @GetMapping("/getpodcast")
+    public ResponseEntity<PodcastDto> getPodcastByName(@RequestParam String name) {
+        return ResponseEntity.ok(podcastService.getPodcastByName(name));
+    }
 
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @GetMapping("/podcasts")
     public ResponseEntity<List<PodcastDto>> getAllPodcastsByGenre(@RequestParam String genre) {
         return ResponseEntity.ok(podcastService.getPodcastsByGenre(genre));
     }
+
+
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @GetMapping("/getepisode/{id}")
+    public ResponseEntity<EpisodeDto> getEpisodeById(@PathVariable UUID id) {
+        return ResponseEntity.ok(episodeService.getEpisode(id));
+    }
+
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @GetMapping("/episodes")
+    public ResponseEntity<List<EpisodeDto>> getAllEpisodes() {
+        return ResponseEntity.ok(episodeService.getAllEpisodes());
+    }
+
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @GetMapping("/getpodcastepisodes/")
+    public ResponseEntity<List<EpisodeDto>> getEpisodesByPodcast(@RequestParam UUID id) {
+        return ResponseEntity.ok(episodeService.getEpisodesByPodcastId(id));
+    }
+
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @GetMapping("/getgenre/{id}")
+    public ResponseEntity<GenreDto> getGenreById(@PathVariable UUID id) {
+        return ResponseEntity.ok(genreService.getGenreById(id));
+    }
+
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @GetMapping("/genres")
+    public ResponseEntity<List<GenreDto>> getAllGenres() {
+        return ResponseEntity.ok(genreService.getAllGenres());
+    }
+
+
 
 }
