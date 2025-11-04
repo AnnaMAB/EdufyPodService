@@ -35,6 +35,18 @@ public class GenreServiceImpl implements GenreService {
         if (genreDto.getName() == null || genreDto.getName().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name is required");
         }
+        if (genreDto.getImageUrl() != null || !genreDto.getImageUrl().isEmpty()) {
+            genre.setImageUrl(genreDto.getImageUrl());
+        }
+        if (genreDto.getThumbnailUrl() != null || !genreDto.getThumbnailUrl().isEmpty()) {
+            genre.setThumbnailUrl(genreDto.getThumbnailUrl());
+        }
+        if (genreDto.getPodcasts() != null && !genreDto.getPodcasts().isEmpty()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Podcasts can not be added from this page."
+            );
+        }
         genre.setName(genreDto.getName());
         return genreRepository.save(genre);
     }
@@ -52,13 +64,24 @@ public class GenreServiceImpl implements GenreService {
                     String.format("No genre exists with id: %s.", genreDto.getId())
             );
         });
-        if (genreDto.getName() == null || genreDto.getName().isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name is required");
+        if (genreDto.getName() != null && !genreDto.getName().equals(genre.getName())) {
+            if (genreDto.getName().isEmpty()){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name is required");
+            }
+            genre.setName(genreDto.getName());
         }
-        if (genre.getName().equals(genreDto.getName())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Nothing to update");
+        if (genreDto.getImageUrl() != null || !genreDto.getImageUrl().equals(genre.getImageUrl())) {
+            genre.setImageUrl(genreDto.getImageUrl());
         }
-        genre.setName(genreDto.getName());
+        if (genreDto.getThumbnailUrl() != null || !genreDto.getThumbnailUrl().equals(genre.getThumbnailUrl())) {
+            genre.setThumbnailUrl(genreDto.getThumbnailUrl());
+        }
+        if (genreDto.getPodcasts() != null && !genreDto.getPodcasts().isEmpty()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Podcasts can not be added from this page."
+            );
+        }
         return genreRepository.save(genre);
     }
 
@@ -86,7 +109,7 @@ public class GenreServiceImpl implements GenreService {
         List<Genre> Genre = genreRepository.findAll();
         List<GenreDto> genresDto = new ArrayList<>();
         for (Genre genre : Genre) {
-            genresDto.add(genreDtoConverter.convertToFullGenreDto(genre));
+            genresDto.add(genreDtoConverter.convertToLimitedGenreDto(genre));
         }
         return genresDto;
     }

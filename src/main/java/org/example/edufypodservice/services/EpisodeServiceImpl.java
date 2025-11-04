@@ -48,6 +48,15 @@ public class EpisodeServiceImpl implements EpisodeService {
         if (episodeDto.getDurationSeconds() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Duration is required");
         }
+        if (episodeDto.getPodcast() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "PodcastId is required");
+        }
+        if (episodeDto.getThumbnailUrl() != null && !episodeDto.getThumbnailUrl().isEmpty()) {
+            episode.setThumbnailUrl(episodeDto.getThumbnailUrl());
+        }
+        if (episodeDto.getImageUrl() != null && !episodeDto.getImageUrl().isEmpty()) {
+            episode.setImageUrl(episodeDto.getImageUrl());
+        }
         if (episodeDto.getPodcastId() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "PodcastId is required");
         }
@@ -55,7 +64,7 @@ public class EpisodeServiceImpl implements EpisodeService {
             //   F_LOG.warn("{} tried to book a workout with id {} that doesn't exist.", role, workoutToBook.getId());
             return new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
-                    String.format("No podcast exists with id: %s.", episodeDto.getPodcastId())
+                    String.format("No podcast exists with id: %s.", episodeDto.getPodcast())
             );
         });
         episode.setTitle(episodeDto.getTitle());
@@ -121,12 +130,18 @@ public class EpisodeServiceImpl implements EpisodeService {
                     "Release date can not be changed."
             );
         }
+        if (episodeDto.getThumbnailUrl() != null && !episodeDto.getThumbnailUrl().equals(episode.getThumbnailUrl())) {
+            episode.setThumbnailUrl(episodeDto.getThumbnailUrl());
+        }
+        if (episodeDto.getImageUrl() != null && !episodeDto.getImageUrl().equals(episode.getImageUrl())) {
+            episode.setImageUrl(episodeDto.getImageUrl());
+        }
         if (episodeDto.getPodcastId() != null && !episodeDto.getPodcastId().equals(episode.getPodcast().getId())) {
             Podcast podcast = podcastRepository.findById(episodeDto.getPodcastId()).orElseThrow(() -> {
                 //   F_LOG.warn("{} tried to book a workout with id {} that doesn't exist.", role, workoutToBook.getId());
                 return new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
-                        String.format("No podcast exists with id: %s.", episodeDto.getPodcastId())
+                        String.format("No podcast exists with id: %s.", episodeDto.getPodcast())
                 );
             });
             episode.setPodcast(podcast);
@@ -186,7 +201,7 @@ public class EpisodeServiceImpl implements EpisodeService {
         List<Episode> episodes = episodeRepository.findAllByPodcast_Id(podcastId);
         List<EpisodeDto> episodeDtos = new ArrayList<>();
         for (Episode episode : episodes) {
-            episodeDtos.add(episodeDtoConverter.convertToFullEpisodeDto(episode));
+            episodeDtos.add(episodeDtoConverter.convertToLimitedEpisodeDto(episode));
         }
         return episodeDtos;
     }

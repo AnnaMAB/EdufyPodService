@@ -14,6 +14,9 @@ public class PodcastDto {
     private String description;
     private List<EpisodeDto> episodes = new ArrayList<>();
     private List<GenreDto> genres = new ArrayList<>();
+    private String thumbnailUrl;
+    private String imageUrl;
+    private UUID producerId;
 
     public PodcastDto() {
     }
@@ -58,6 +61,30 @@ public class PodcastDto {
         this.genres = genres;
     }
 
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
+    }
+
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
+    }
+
+    public UUID getProducerId() {
+        return producerId;
+    }
+
+    public void setProducerId(UUID producerId) {
+        this.producerId = producerId;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
     @Override
     public String toString() {
         return "PodcastDto{" +
@@ -66,6 +93,9 @@ public class PodcastDto {
                 ", description='" + description + '\'' +
                 ", episodes=" + episodes +
                 ", genres=" + genres +
+                ", thumbnailUrl='" + thumbnailUrl + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", producerId=" + producerId +
                 '}';
     }
 }

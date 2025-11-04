@@ -6,8 +6,8 @@ INSERT INTO genre (genre_id, name) VALUES
 
 -- PODCASTS
 INSERT INTO podcast (podcast_id, name, description) VALUES
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'CodeTalk', 'A podcastId about software development, architecture, and frameworks.'),
-('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'LaughTrack', 'Comedy podcastId with improv and absurd humor.'),
+('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'CodeTalk', 'A podcast about software development, architecture, and frameworks.'),
+('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'LaughTrack', 'Comedy podcast with improv and absurd humor.'),
 ('cccccccc-cccc-cccc-cccc-cccccccccccc', 'CrimeLens', 'Investigating real-world crime stories from around the world.');
 
 -- GENRE–PODCAST RELATIONS

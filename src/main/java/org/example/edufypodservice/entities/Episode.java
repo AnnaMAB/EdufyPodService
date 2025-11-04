@@ -30,6 +30,8 @@ public class Episode {
     @JoinColumn(name = "podcast_id")
     @JsonIgnoreProperties({"episodes", "genres"})
     private Podcast podcast;
+    private String thumbnailUrl;
+    private String imageUrl;
 
     public Episode() {
     }
@@ -90,6 +92,22 @@ public class Episode {
         this.podcast = podcast;
     }
 
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
+    }
+
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
     @Override
     public String toString() {
         return "Episode{" +
@@ -99,6 +117,8 @@ public class Episode {
                 ", description='" + description + '\'' +
                 ", releaseDate=" + releaseDate +
                 ", durationSeconds=" + durationSeconds +
+                ", thumbnailUrl='" + thumbnailUrl + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
                 '}';
     }
 }

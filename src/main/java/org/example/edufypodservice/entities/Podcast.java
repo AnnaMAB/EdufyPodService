@@ -24,6 +24,9 @@ public class Podcast {
     private List<Episode> episodes = new ArrayList<>();
     @ManyToMany(mappedBy = "podcasts",  fetch = FetchType.LAZY)
     private List<Genre> genres = new ArrayList<>();
+    private UUID producerId;
+    private String thumbnailUrl;
+    private String imageUrl;
 
     public Podcast() {
 
@@ -69,12 +72,39 @@ public class Podcast {
         this.genres = genres;
     }
 
+    public UUID getProducerId() {
+        return producerId;
+    }
+
+    public void setProducerId(UUID producerId) {
+        this.producerId = producerId;
+    }
+
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
+    }
+
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
     @Override
     public String toString() {
         return "Podcast{" +
                 "id=" + id +
-                ", Name='" + name + '\'' +
+                ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
+                ", producerId=" + producerId +
+                ", thumbnailUrl='" + thumbnailUrl + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
                 '}';
     }
 }

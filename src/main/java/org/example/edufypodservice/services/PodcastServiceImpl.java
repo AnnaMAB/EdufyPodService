@@ -7,6 +7,7 @@ import org.example.edufypodservice.dto.PodcastDto;
 import org.example.edufypodservice.entities.Genre;
 import org.example.edufypodservice.entities.Podcast;
 import org.example.edufypodservice.mapper.PodcastDtoConverter;
+import org.example.edufypodservice.repositories.GenreRepository;
 import org.example.edufypodservice.repositories.PodcastRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -22,11 +24,13 @@ public class PodcastServiceImpl implements PodcastService{
 
     private final PodcastRepository podcastRepository;
     private final PodcastDtoConverter podcastDtoConverter;
+    private final GenreRepository genreRepository;
 
     @Autowired
-    public PodcastServiceImpl(PodcastRepository podcastRepository, PodcastDtoConverter podcastDtoConverter) {
+    public PodcastServiceImpl(PodcastRepository podcastRepository, PodcastDtoConverter podcastDtoConverter, GenreRepository genreRepository) {
         this.podcastRepository = podcastRepository;
         this.podcastDtoConverter = podcastDtoConverter;
+        this.genreRepository = genreRepository;
     }
 
     @Transactional
@@ -42,17 +46,28 @@ public class PodcastServiceImpl implements PodcastService{
         if (podcastDto.getGenres() == null || podcastDto.getGenres().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Genres is required");
         }
+        if (podcastDto.getProducerId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Producer is required");
+        }
+        if (podcastDto.getImageUrl() != null && !podcastDto.getImageUrl().isEmpty()) {
+            podcast.setImageUrl(podcastDto.getImageUrl());
+        }
+        if (podcastDto.getThumbnailUrl() != null && !podcastDto.getThumbnailUrl().isEmpty()) {
+            podcast.setThumbnailUrl(podcastDto.getThumbnailUrl());
+        }
         podcast.setName(podcastDto.getName());
         podcast.setDescription(podcastDto.getDescription());
         List<GenreDto> genresDto = podcastDto.getGenres();
         List<Genre> genres = new ArrayList<>();
         for (GenreDto genreDto : genresDto) {
-            Genre genre = new Genre();
-            genre.setId(genreDto.getId());
-            genre.setName(genreDto.getName());
-            genres.add(genre);
+            if (genreDto.getId() != null) {
+                Optional<Genre> genre = genreRepository.findById(genreDto.getId());
+                if (genre.isPresent()) {
+                    genres.add(genre.get());
+                }
+            }
         }
-        podcast.setGenres(genres); //TODO--------Bestäm hur genres ska vara i PodcastDto-------------------------------
+        podcast.setGenres(genres);
         return podcastRepository.save(podcast);
     }
 
@@ -96,16 +111,28 @@ public class PodcastServiceImpl implements PodcastService{
                     "Episodes can not be modified from this page."
             );
         }
+
+        if (podcastDto.getProducerId() != null && !podcastDto.getProducerId().equals(podcast.getProducerId())) {
+            podcast.setProducerId(podcastDto.getProducerId());
+        }
+        if (podcastDto.getImageUrl() != null && !podcastDto.getImageUrl().equals(podcast.getImageUrl())) {
+            podcast.setImageUrl(podcastDto.getImageUrl());
+        }
+        if (podcastDto.getThumbnailUrl() != null && !podcastDto.getThumbnailUrl().equals(podcast.getThumbnailUrl())) {
+            podcast.setThumbnailUrl(podcastDto.getThumbnailUrl());
+        }
         if (podcastDto.getGenres() != null && !podcastDto.getGenres().isEmpty()) {
             List<GenreDto> genresDto = podcastDto.getGenres();
             List<Genre> genres = new ArrayList<>();
             for (GenreDto genreDto : genresDto) {
-                Genre genre = new Genre();
-                genre.setId(genreDto.getId());
-                genre.setName(genreDto.getName());
-                genres.add(genre);
+                if (genreDto.getId() != null) {
+                    Optional<Genre> genre = genreRepository.findById(genreDto.getId());
+                    if (genre.isPresent()) {
+                        genres.add(genre.get());
+                    }
+                }
             }
-            podcast.setGenres(genres); //TODO--------Bestäm hur genres ska vara i PodcastDto-------------------------------
+            podcast.setGenres(genres);
         }
         return podcastRepository.save(podcast);
     }

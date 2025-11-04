@@ -1,6 +1,5 @@
 package org.example.edufypodservice.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.time.LocalDate;
@@ -15,8 +14,10 @@ public class EpisodeDto {
     private String description;
     private LocalDate releaseDate;
     private Long durationSeconds;
-    @JsonIgnoreProperties({"episodes", "genres"})
+    private PodcastDto podcast;
     private UUID podcastId;
+    private String thumbnailUrl;
+    private String imageUrl;
 
     public EpisodeDto() {
     }
@@ -69,12 +70,36 @@ public class EpisodeDto {
         this.durationSeconds = durationSeconds;
     }
 
+    public PodcastDto getPodcast() {
+        return podcast;
+    }
+
+    public void setPodcast(PodcastDto podcast) {
+        this.podcast = podcast;
+    }
+
     public UUID getPodcastId() {
         return podcastId;
     }
 
     public void setPodcastId(UUID podcastId) {
         this.podcastId = podcastId;
+    }
+
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
+    }
+
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     @Override
@@ -86,7 +111,10 @@ public class EpisodeDto {
                 ", description='" + description + '\'' +
                 ", releaseDate=" + releaseDate +
                 ", durationSeconds=" + durationSeconds +
+                ", podcast=" + podcast +
                 ", podcastId=" + podcastId +
+                ", thumbnailUrl='" + thumbnailUrl + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
                 '}';
     }
 }

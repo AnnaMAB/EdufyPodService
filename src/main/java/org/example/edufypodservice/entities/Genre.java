@@ -23,6 +23,10 @@ public class Genre {
     @JoinTable(name = "genre_podcast", joinColumns = @JoinColumn(name = "genre_id"), inverseJoinColumns = @JoinColumn(name = "podcast_id"))
     @JsonIgnoreProperties({"episodes","genres"})
     private List<Podcast> podcasts = new ArrayList<>();
+    @Column(length = 500)
+    private String thumbnailUrl;
+    @Column(length = 500)
+    private String imageUrl;
 
     public Genre() {
 
@@ -52,11 +56,29 @@ public class Genre {
         this.podcasts = podcasts;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
+    }
+
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
+    }
+
     @Override
     public String toString() {
         return "Genre{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", thumbnailUrl='" + thumbnailUrl + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
                 '}';
     }
 }
