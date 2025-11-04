@@ -3,6 +3,8 @@ package org.example.edufypodservice.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -11,7 +13,8 @@ import java.util.UUID;
 public class Episode {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "episode_id")
+    @Column(name = "episode_id", columnDefinition = "char(36)")
+    @JdbcTypeCode(SqlTypes.CHAR)
     private UUID id;
     @Column(length = 500, nullable = false)
     private String url;
@@ -22,9 +25,9 @@ public class Episode {
     @Column(nullable = false)
     private LocalDate releaseDate;
     @Column(nullable = false)
-    private int durationSeconds;
+    private Long durationSeconds;
     @ManyToOne
-    @JoinColumn(name = "podcast_id", nullable = false)
+    @JoinColumn(name = "podcast_id")
     @JsonIgnoreProperties({"episodes", "genres"})
     private Podcast podcast;
 
@@ -71,11 +74,11 @@ public class Episode {
         this.releaseDate = releaseDate;
     }
 
-    public int getDurationSeconds() {
+    public Long getDurationSeconds() {
         return durationSeconds;
     }
 
-    public void setDurationSeconds(int durationSeconds) {
+    public void setDurationSeconds(Long durationSeconds) {
         this.durationSeconds = durationSeconds;
     }
 

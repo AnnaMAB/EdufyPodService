@@ -3,6 +3,8 @@ package org.example.edufypodservice.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +14,8 @@ import java.util.UUID;
 public class Genre {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "genre_id")
+    @Column(name = "genre_id", columnDefinition = "char(36)")
+    @JdbcTypeCode(SqlTypes.CHAR)
     private UUID id;
     @Column(length = 40, nullable = false)
     private String name;

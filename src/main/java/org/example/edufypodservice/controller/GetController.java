@@ -44,13 +44,13 @@ public class GetController {
     }
 
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    @GetMapping("/getpodcast")
-    public ResponseEntity<PodcastDto> getPodcastByName(@RequestParam String name) {
+    @GetMapping("/getpodcastnamed")
+    public ResponseEntity<List<PodcastDto>> getPodcastByName(@RequestParam String name) {
         return ResponseEntity.ok(podcastService.getPodcastByName(name));
     }
 
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    @GetMapping("/podcasts")
+    @GetMapping("/podcastbygenre")
     public ResponseEntity<List<PodcastDto>> getAllPodcastsByGenre(@RequestParam String genre) {
         return ResponseEntity.ok(podcastService.getPodcastsByGenre(genre));
     }

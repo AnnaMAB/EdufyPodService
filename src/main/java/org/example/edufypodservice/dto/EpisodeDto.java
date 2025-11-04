@@ -1,6 +1,5 @@
 package org.example.edufypodservice.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -14,11 +13,10 @@ public class EpisodeDto {
     private String url;
     private String title;
     private String description;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDate releaseDate;
-    private int durationSeconds;
+    private Long durationSeconds;
     @JsonIgnoreProperties({"episodes", "genres"})
-    private PodcastDto podcast;
+    private UUID podcastId;
 
     public EpisodeDto() {
     }
@@ -63,20 +61,20 @@ public class EpisodeDto {
         this.releaseDate = releaseDate;
     }
 
-    public int getDurationSeconds() {
+    public Long getDurationSeconds() {
         return durationSeconds;
     }
 
-    public void setDurationSeconds(int durationSeconds) {
+    public void setDurationSeconds(Long durationSeconds) {
         this.durationSeconds = durationSeconds;
     }
 
-    public PodcastDto getPodcast() {
-        return podcast;
+    public UUID getPodcastId() {
+        return podcastId;
     }
 
-    public void setPodcast(PodcastDto podcast) {
-        this.podcast = podcast;
+    public void setPodcastId(UUID podcastId) {
+        this.podcastId = podcastId;
     }
 
     @Override
@@ -88,7 +86,7 @@ public class EpisodeDto {
                 ", description='" + description + '\'' +
                 ", releaseDate=" + releaseDate +
                 ", durationSeconds=" + durationSeconds +
-                ", podcast=" + podcast +
+                ", podcastId=" + podcastId +
                 '}';
     }
 }

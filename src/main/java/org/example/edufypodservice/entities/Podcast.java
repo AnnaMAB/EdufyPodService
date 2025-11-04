@@ -1,6 +1,8 @@
 package org.example.edufypodservice.entities;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,10 +13,11 @@ import java.util.UUID;
 public class Podcast {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "podcast_id")
+    @Column(name = "podcast_id", columnDefinition = "char(36)")
+    @JdbcTypeCode(SqlTypes.CHAR)
     private UUID id;
     @Column(length = 50, nullable = false)
-    private String Name;
+    private String name;
     @Column(length = 500, nullable = false)
     private String description;
     @OneToMany(mappedBy = "podcast", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
@@ -35,11 +38,11 @@ public class Podcast {
     }
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public void setName(String name) {
-        this.Name = name;
+        this.name = name;
     }
 
     public String getDescription() {
@@ -70,7 +73,7 @@ public class Podcast {
     public String toString() {
         return "Podcast{" +
                 "id=" + id +
-                ", Name='" + Name + '\'' +
+                ", Name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 '}';
     }

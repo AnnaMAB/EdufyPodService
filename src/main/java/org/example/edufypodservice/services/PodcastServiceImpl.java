@@ -1,11 +1,19 @@
 package org.example.edufypodservice.services;
 
 
+import jakarta.transaction.Transactional;
+import org.example.edufypodservice.dto.GenreDto;
 import org.example.edufypodservice.dto.PodcastDto;
+import org.example.edufypodservice.entities.Genre;
+import org.example.edufypodservice.entities.Podcast;
+import org.example.edufypodservice.mapper.PodcastDtoConverter;
 import org.example.edufypodservice.repositories.PodcastRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -13,45 +21,159 @@ import java.util.UUID;
 public class PodcastServiceImpl implements PodcastService{
 
     private final PodcastRepository podcastRepository;
+    private final PodcastDtoConverter podcastDtoConverter;
 
     @Autowired
-    public PodcastServiceImpl(PodcastRepository podcastRepository) {
+    public PodcastServiceImpl(PodcastRepository podcastRepository, PodcastDtoConverter podcastDtoConverter) {
         this.podcastRepository = podcastRepository;
+        this.podcastDtoConverter = podcastDtoConverter;
     }
 
-
+    @Transactional
     @Override
-    public PodcastDto addPodcast(PodcastDto podcastDto) {
-        return null;
+    public Podcast addPodcast(PodcastDto podcastDto) {
+        Podcast podcast = new Podcast();
+        if (podcastDto.getName() == null || podcastDto.getName().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name is required");
+        }
+        if (podcastDto.getDescription() == null || podcastDto.getDescription().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Description is required");
+        }
+        if (podcastDto.getGenres() == null || podcastDto.getGenres().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Genres is required");
+        }
+        podcast.setName(podcastDto.getName());
+        podcast.setDescription(podcastDto.getDescription());
+        List<GenreDto> genresDto = podcastDto.getGenres();
+        List<Genre> genres = new ArrayList<>();
+        for (GenreDto genreDto : genresDto) {
+            Genre genre = new Genre();
+            genre.setId(genreDto.getId());
+            genre.setName(genreDto.getName());
+            genres.add(genre);
+        }
+        podcast.setGenres(genres); //TODO--------Bestäm hur genres ska vara i PodcastDto-------------------------------
+        return podcastRepository.save(podcast);
     }
 
+    @Transactional
     @Override
-    public PodcastDto updatePodcast(PodcastDto podcastDto) {
-        return null;
+    public Podcast updatePodcast(PodcastDto podcastDto) {
+        if(podcastDto.getId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Podcast id is required");
+        }
+        Podcast podcast = podcastRepository.findById(podcastDto.getId()).orElseThrow(() -> {
+            //   F_LOG.warn("{} tried to book a workout with id {} that doesn't exist.", role, workoutToBook.getId());
+            return new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    String.format("No podcast exists with id: %s.", podcastDto.getId())
+            );
+        });
+
+        if (podcastDto.getName() != null && !podcastDto.getName().equals(podcast.getName())) {
+            if(podcastDto.getName().isEmpty()) {
+                // F_LOG.warn("{} tried to update a workout with invalid title.", role);
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Name can not be left blank."
+                );
+            }
+            podcast.setName(podcastDto.getName());
+        }
+        if (podcastDto.getDescription() != null && !podcastDto.getDescription().equals(podcast.getDescription())) {
+            if(podcastDto.getDescription().isEmpty()) {
+                // F_LOG.warn("{} tried to update a workout with invalid title.", role);
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Description can not be left blank."
+                );
+            }
+            podcast.setDescription(podcastDto.getDescription());
+        }
+        if (podcastDto.getEpisodes() != null && !podcastDto.getEpisodes().isEmpty()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Episodes can not be modified from this page."
+            );
+        }
+        if (podcastDto.getGenres() != null && !podcastDto.getGenres().isEmpty()) {
+            List<GenreDto> genresDto = podcastDto.getGenres();
+            List<Genre> genres = new ArrayList<>();
+            for (GenreDto genreDto : genresDto) {
+                Genre genre = new Genre();
+                genre.setId(genreDto.getId());
+                genre.setName(genreDto.getName());
+                genres.add(genre);
+            }
+            podcast.setGenres(genres); //TODO--------Bestäm hur genres ska vara i PodcastDto-------------------------------
+        }
+        return podcastRepository.save(podcast);
     }
 
+    @Transactional
     @Override
-    public String deletePodcast(PodcastDto podcastDto) {
-        return "";
+    public String deletePodcast(UUID podcastId) {
+         if (podcastId == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Id must be provided"
+            );
+        }
+        if (!podcastRepository.existsById(podcastId)) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    String.format("No podcast exists with id: %s.", podcastId)
+            );
+        }
+        podcastRepository.deleteById(podcastId);
+        return String.format("Podcast with Id: %s, and associated episodes have been successfully deleted.", podcastId);
     }
 
     @Override
     public List<PodcastDto> getAllPodcasts() {
-        return List.of();
+        List<Podcast> podcasts = podcastRepository.findAll();
+        List<PodcastDto> podcastDtos = new ArrayList<>();
+        for (Podcast podcast : podcasts) {
+            podcastDtos.add(podcastDtoConverter.convertToFullPodcastDto(podcast));
+        }
+        return podcastDtos;
     }
 
     @Override
     public PodcastDto getPodcastById(UUID id) {
-        return null;
+        if (id == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Id must be provided"
+            );
+        }
+        Podcast podcast = podcastRepository.findById(id).orElseThrow(() -> {
+            //   F_LOG.warn("{} tried to book a workout with id {} that doesn't exist.", role, workoutToBook.getId());
+            return new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    String.format("No podcast exists with id: %s.", id)
+            );
+        });
+        return podcastDtoConverter.convertToFullPodcastDto(podcast);
     }
 
     @Override
-    public PodcastDto getPodcastByName(String podcastName) {
-        return null;
+    public List<PodcastDto> getPodcastByName(String podcastName) {
+        List<Podcast> podcasts = podcastRepository.findByName(podcastName);
+        List<PodcastDto> podcastDtos = new ArrayList<>();
+        for (Podcast podcast : podcasts) {
+            podcastDtos.add(podcastDtoConverter.convertToFullPodcastDto(podcast));
+        }
+        return podcastDtos;
     }
 
     @Override
     public List<PodcastDto> getPodcastsByGenre(String genre) {
-        return List.of();
+        List<Podcast> podcasts = podcastRepository.findByGenres_Name(genre);
+        List<PodcastDto> podcastDtos = new ArrayList<>();
+        for (Podcast podcast : podcasts) {
+            podcastDtos.add(podcastDtoConverter.convertToFullPodcastDto(podcast));
+        }
+        return podcastDtos;
     }
 }
