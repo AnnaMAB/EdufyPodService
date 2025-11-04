@@ -73,6 +73,7 @@ public class EpisodeServiceImpl implements EpisodeService {
         episode.setDurationSeconds(episodeDto.getDurationSeconds());
         episode.setReleaseDate(LocalDate.now());
         episode.setPodcast(podcast);
+        podcast.getEpisodes().add(episode);
         return episodeRepository.save(episode);
     }
 
@@ -137,6 +138,7 @@ public class EpisodeServiceImpl implements EpisodeService {
             episode.setImageUrl(episodeDto.getImageUrl());
         }
         if (episodeDto.getPodcastId() != null && !episodeDto.getPodcastId().equals(episode.getPodcast().getId())) {
+            episode.getPodcast().getEpisodes().remove(episode);
             Podcast podcast = podcastRepository.findById(episodeDto.getPodcastId()).orElseThrow(() -> {
                 //   F_LOG.warn("{} tried to book a workout with id {} that doesn't exist.", role, workoutToBook.getId());
                 return new ResponseStatusException(
@@ -145,6 +147,7 @@ public class EpisodeServiceImpl implements EpisodeService {
                 );
             });
             episode.setPodcast(podcast);
+            podcast.getEpisodes().add(episode);
         }
         return episodeRepository.save(episode);
     }
