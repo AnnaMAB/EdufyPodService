@@ -37,10 +37,10 @@ public class PodcastServiceImpl implements PodcastService{
     @Override
     public Podcast addPodcast(PodcastDto podcastDto) {
         Podcast podcast = new Podcast();
-        if (podcastDto.getName() == null || podcastDto.getName().isEmpty()) {
+        if (podcastDto.getName() == null || podcastDto.getName().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name is required");
         }
-        if (podcastDto.getDescription() == null || podcastDto.getDescription().isEmpty()) {
+        if (podcastDto.getDescription() == null || podcastDto.getDescription().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Description is required");
         }
         if (podcastDto.getGenres() == null || podcastDto.getGenres().isEmpty()) {
@@ -49,10 +49,10 @@ public class PodcastServiceImpl implements PodcastService{
         if (podcastDto.getProducerId() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Producer is required");
         }
-        if (podcastDto.getImageUrl() != null && !podcastDto.getImageUrl().isEmpty()) {
+        if (podcastDto.getImageUrl() != null && !podcastDto.getImageUrl().isBlank()) {
             podcast.setImageUrl(podcastDto.getImageUrl());
         }
-        if (podcastDto.getThumbnailUrl() != null && !podcastDto.getThumbnailUrl().isEmpty()) {
+        if (podcastDto.getThumbnailUrl() != null && !podcastDto.getThumbnailUrl().isBlank()) {
             podcast.setThumbnailUrl(podcastDto.getThumbnailUrl());
         }
         podcast.setName(podcastDto.getName());
@@ -86,7 +86,7 @@ public class PodcastServiceImpl implements PodcastService{
         });
 
         if (podcastDto.getName() != null && !podcastDto.getName().equals(podcast.getName())) {
-            if(podcastDto.getName().isEmpty()) {
+            if(podcastDto.getName().isBlank()) {
                 // F_LOG.warn("{} tried to update a workout with invalid title.", role);
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
@@ -96,7 +96,7 @@ public class PodcastServiceImpl implements PodcastService{
             podcast.setName(podcastDto.getName());
         }
         if (podcastDto.getDescription() != null && !podcastDto.getDescription().equals(podcast.getDescription())) {
-            if(podcastDto.getDescription().isEmpty()) {
+            if(podcastDto.getDescription().isBlank()) {
                 // F_LOG.warn("{} tried to update a workout with invalid title.", role);
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,

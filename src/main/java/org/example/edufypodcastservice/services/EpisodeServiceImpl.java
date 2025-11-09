@@ -36,13 +36,13 @@ public class EpisodeServiceImpl implements EpisodeService {
     @Override
     public Episode addEpisode(EpisodeDto episodeDto) {
         Episode episode = new Episode();
-        if (episodeDto.getTitle() == null || episodeDto.getTitle().isEmpty()) {
+        if (episodeDto.getTitle() == null || episodeDto.getTitle().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Title is required");
         }
-        if (episodeDto.getUrl() == null || episodeDto.getUrl().isEmpty()) {
+        if (episodeDto.getUrl() == null || episodeDto.getUrl().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Url is required");
         }
-        if (episodeDto.getDescription() == null || episodeDto.getDescription().isEmpty()) {
+        if (episodeDto.getDescription() == null || episodeDto.getDescription().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Description is required");
         }
         if (episodeDto.getDurationSeconds() == null) {
@@ -51,10 +51,10 @@ public class EpisodeServiceImpl implements EpisodeService {
         if (episodeDto.getPodcast() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "PodcastId is required");
         }
-        if (episodeDto.getThumbnailUrl() != null && !episodeDto.getThumbnailUrl().isEmpty()) {
+        if (episodeDto.getThumbnailUrl() != null && !episodeDto.getThumbnailUrl().isBlank()) {
             episode.setThumbnailUrl(episodeDto.getThumbnailUrl());
         }
-        if (episodeDto.getImageUrl() != null && !episodeDto.getImageUrl().isEmpty()) {
+        if (episodeDto.getImageUrl() != null && !episodeDto.getImageUrl().isBlank()) {
             episode.setImageUrl(episodeDto.getImageUrl());
         }
         if (episodeDto.getPodcastId() == null) {
@@ -92,7 +92,7 @@ public class EpisodeServiceImpl implements EpisodeService {
         });
 
         if (episodeDto.getTitle() != null && !episodeDto.getTitle().equals(episode.getTitle())) {
-            if(episodeDto.getTitle().isEmpty()) {
+            if(episodeDto.getTitle().isBlank()) {
                // F_LOG.warn("{} tried to update a workout with invalid title.", role);
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
@@ -102,7 +102,7 @@ public class EpisodeServiceImpl implements EpisodeService {
             episode.setTitle(episodeDto.getTitle());
         }
         if (episodeDto.getUrl() != null && !episodeDto.getUrl().equals(episode.getUrl())) {
-            if(episodeDto.getUrl().isEmpty()) {
+            if(episodeDto.getUrl().isBlank()) {
                // F_LOG.warn("{} tried to update a workout with invalid title.", role);
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
@@ -112,7 +112,7 @@ public class EpisodeServiceImpl implements EpisodeService {
             episode.setUrl(episodeDto.getUrl());
         }
         if (episodeDto.getDescription() != null && !episodeDto.getDescription().equals(episode.getDescription())) {
-            if(episodeDto.getDescription().isEmpty()) {
+            if(episodeDto.getDescription().isBlank()) {
                // F_LOG.warn("{} tried to update a workout with invalid title.", role);
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,

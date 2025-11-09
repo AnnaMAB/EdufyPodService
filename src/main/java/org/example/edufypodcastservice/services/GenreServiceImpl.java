@@ -32,13 +32,13 @@ public class GenreServiceImpl implements GenreService {
     @Override
     public Genre addGenre(GenreDto genreDto) {
         Genre genre = new Genre();
-        if (genreDto.getName() == null || genreDto.getName().isEmpty()) {
+        if (genreDto.getName() == null || genreDto.getName().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name is required");
         }
-        if (genreDto.getImageUrl() != null || !genreDto.getImageUrl().isEmpty()) {
+        if (genreDto.getImageUrl() != null || !genreDto.getImageUrl().isBlank()) {
             genre.setImageUrl(genreDto.getImageUrl());
         }
-        if (genreDto.getThumbnailUrl() != null || !genreDto.getThumbnailUrl().isEmpty()) {
+        if (genreDto.getThumbnailUrl() != null || !genreDto.getThumbnailUrl().isBlank()) {
             genre.setThumbnailUrl(genreDto.getThumbnailUrl());
         }
         if (genreDto.getPodcasts() != null && !genreDto.getPodcasts().isEmpty()) {
@@ -65,7 +65,7 @@ public class GenreServiceImpl implements GenreService {
             );
         });
         if (genreDto.getName() != null && !genreDto.getName().equals(genre.getName())) {
-            if (genreDto.getName().isEmpty()){
+            if (genreDto.getName().isBlank()){
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name is required");
             }
             genre.setName(genreDto.getName());
