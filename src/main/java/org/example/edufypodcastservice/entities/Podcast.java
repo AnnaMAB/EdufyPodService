@@ -24,8 +24,11 @@ public class Podcast {
     private List<Episode> episodes = new ArrayList<>();
     @ManyToMany(mappedBy = "podcasts",  fetch = FetchType.LAZY)
     private List<Genre> genres = new ArrayList<>();
+    @Column(nullable = false)
     private UUID producerId;
+    @Column(length = 500, nullable = true)
     private String thumbnailUrl;
+    @Column(length = 500, nullable = true)
     private String imageUrl;
 
     public Podcast() {

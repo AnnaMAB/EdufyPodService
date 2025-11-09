@@ -30,7 +30,9 @@ public class Episode {
     @JoinColumn(name = "podcast_id")
     @JsonIgnoreProperties({"episodes", "genres"})
     private Podcast podcast;
+    @Column(length = 500, nullable = true)
     private String thumbnailUrl;
+    @Column(length = 500, nullable = true)
     private String imageUrl;
 
     public Episode() {
