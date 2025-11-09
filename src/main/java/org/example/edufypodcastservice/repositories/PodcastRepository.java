@@ -1,6 +1,6 @@
-package org.example.edufypodservice.repositories;
+package org.example.edufypodcastservice.repositories;
 
-import org.example.edufypodservice.entities.Podcast;
+import org.example.edufypodcastservice.entities.Podcast;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

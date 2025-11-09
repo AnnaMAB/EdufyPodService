@@ -1,8 +1,8 @@
-package org.example.edufypodservice.services;
+package org.example.edufypodcastservice.services;
 
 
-import org.example.edufypodservice.dto.PodcastDto;
-import org.example.edufypodservice.entities.Podcast;
+import org.example.edufypodcastservice.dto.PodcastDto;
+import org.example.edufypodcastservice.entities.Podcast;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

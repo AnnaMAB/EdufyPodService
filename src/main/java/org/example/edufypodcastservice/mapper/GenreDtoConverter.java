@@ -1,10 +1,9 @@
-package org.example.edufypodservice.mapper;
+package org.example.edufypodcastservice.mapper;
 
-import org.example.edufypodservice.dto.GenreDto;
-import org.example.edufypodservice.dto.PodcastDto;
-import org.example.edufypodservice.entities.Episode;
-import org.example.edufypodservice.entities.Genre;
-import org.example.edufypodservice.entities.Podcast;
+import org.example.edufypodcastservice.dto.GenreDto;
+import org.example.edufypodcastservice.dto.PodcastDto;
+import org.example.edufypodcastservice.entities.Genre;
+import org.example.edufypodcastservice.entities.Podcast;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

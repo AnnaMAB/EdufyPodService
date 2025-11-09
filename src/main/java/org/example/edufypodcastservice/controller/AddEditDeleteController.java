@@ -1,14 +1,14 @@
-package org.example.edufypodservice.controller;
+package org.example.edufypodcastservice.controller;
 
-import org.example.edufypodservice.dto.EpisodeDto;
-import org.example.edufypodservice.dto.GenreDto;
-import org.example.edufypodservice.dto.PodcastDto;
-import org.example.edufypodservice.entities.Episode;
-import org.example.edufypodservice.entities.Genre;
-import org.example.edufypodservice.entities.Podcast;
-import org.example.edufypodservice.services.EpisodeServiceImpl;
-import org.example.edufypodservice.services.GenreServiceImpl;
-import org.example.edufypodservice.services.PodcastServiceImpl;
+import org.example.edufypodcastservice.dto.EpisodeDto;
+import org.example.edufypodcastservice.dto.GenreDto;
+import org.example.edufypodcastservice.dto.PodcastDto;
+import org.example.edufypodcastservice.entities.Episode;
+import org.example.edufypodcastservice.entities.Genre;
+import org.example.edufypodcastservice.entities.Podcast;
+import org.example.edufypodcastservice.services.EpisodeServiceImpl;
+import org.example.edufypodcastservice.services.GenreServiceImpl;
+import org.example.edufypodcastservice.services.PodcastServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

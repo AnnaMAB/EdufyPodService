@@ -1,8 +1,8 @@
-package org.example.edufypodservice.services;
+package org.example.edufypodcastservice.services;
 
 
-import org.example.edufypodservice.dto.GenreDto;
-import org.example.edufypodservice.entities.Genre;
+import org.example.edufypodcastservice.dto.GenreDto;
+import org.example.edufypodcastservice.entities.Genre;
 
 import java.util.List;
 import java.util.UUID;

@@ -1,4 +1,4 @@
-package org.example.edufypodservice.entities;
+package org.example.edufypodcastservice.entities;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;

@@ -1,12 +1,12 @@
-package org.example.edufypodservice.services;
+package org.example.edufypodcastservice.services;
 
 import jakarta.transaction.Transactional;
-import org.example.edufypodservice.dto.EpisodeDto;
-import org.example.edufypodservice.entities.Episode;
-import org.example.edufypodservice.entities.Podcast;
-import org.example.edufypodservice.mapper.EpisodeDtoConverter;
-import org.example.edufypodservice.repositories.EpisodeRepository;
-import org.example.edufypodservice.repositories.PodcastRepository;
+import org.example.edufypodcastservice.dto.EpisodeDto;
+import org.example.edufypodcastservice.entities.Episode;
+import org.example.edufypodcastservice.entities.Podcast;
+import org.example.edufypodcastservice.mapper.EpisodeDtoConverter;
+import org.example.edufypodcastservice.repositories.EpisodeRepository;
+import org.example.edufypodcastservice.repositories.PodcastRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

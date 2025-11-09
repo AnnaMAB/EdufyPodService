@@ -1,4 +1,4 @@
-package org.example.edufypodservice.dto;
+package org.example.edufypodcastservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

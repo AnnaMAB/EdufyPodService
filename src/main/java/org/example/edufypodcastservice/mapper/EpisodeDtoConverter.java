@@ -1,7 +1,7 @@
-package org.example.edufypodservice.mapper;
+package org.example.edufypodcastservice.mapper;
 
-import org.example.edufypodservice.dto.EpisodeDto;
-import org.example.edufypodservice.entities.Episode;
+import org.example.edufypodcastservice.dto.EpisodeDto;
+import org.example.edufypodcastservice.entities.Episode;
 import org.springframework.stereotype.Component;
 
 @Component

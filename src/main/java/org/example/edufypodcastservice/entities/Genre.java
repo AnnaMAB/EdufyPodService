@@ -1,4 +1,4 @@
-package org.example.edufypodservice.entities;
+package org.example.edufypodcastservice.entities;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
