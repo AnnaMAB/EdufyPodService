@@ -4,7 +4,8 @@ import jakarta.transaction.Transactional;
 import org.example.edufypodcastservice.dto.EpisodeDto;
 import org.example.edufypodcastservice.entities.Episode;
 import org.example.edufypodcastservice.entities.Podcast;
-import org.example.edufypodcastservice.mapper.EpisodeDtoConverter;
+import org.example.edufypodcastservice.mapper.FullDtoConverter;
+import org.example.edufypodcastservice.mapper.LimitedDtoConverter;
 import org.example.edufypodcastservice.repositories.EpisodeRepository;
 import org.example.edufypodcastservice.repositories.PodcastRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +23,15 @@ import java.util.UUID;
 public class EpisodeServiceImpl implements EpisodeService {
 
     private final EpisodeRepository episodeRepository;
-    private final EpisodeDtoConverter episodeDtoConverter;
+    private final FullDtoConverter fullDtoConverter;
+    private final LimitedDtoConverter limitedDtoConverter;
     private final PodcastRepository podcastRepository;
 
     @Autowired
-    public EpisodeServiceImpl(EpisodeRepository episodeRepository, EpisodeDtoConverter episodeDtoConverter, PodcastRepository podcastRepository) {
+    public EpisodeServiceImpl(EpisodeRepository episodeRepository, FullDtoConverter fullDtoConverter, LimitedDtoConverter limitedDtoConverter, PodcastRepository podcastRepository) {
         this.episodeRepository = episodeRepository;
-        this.episodeDtoConverter = episodeDtoConverter;
+        this.fullDtoConverter = fullDtoConverter;
+        this.limitedDtoConverter = limitedDtoConverter;
         this.podcastRepository = podcastRepository;
     }
 
@@ -186,7 +189,7 @@ public class EpisodeServiceImpl implements EpisodeService {
                     String.format("No episode exists with id: %s.", episodeId)
             );
         });
-        return episodeDtoConverter.convertToFullEpisodeDto(episode);
+        return fullDtoConverter.convertToFullEpisodeDto(episode);
     }
 
     @Override
@@ -194,7 +197,7 @@ public class EpisodeServiceImpl implements EpisodeService {
         List<Episode> episodes = episodeRepository.findAll();
         List<EpisodeDto> episodeDtos = new ArrayList<>();
         for (Episode episode : episodes) {
-            episodeDtos.add(episodeDtoConverter.convertToFullEpisodeDto(episode));
+            episodeDtos.add(fullDtoConverter.convertToFullEpisodeDto(episode));
         }
         return episodeDtos;
     }
@@ -204,7 +207,7 @@ public class EpisodeServiceImpl implements EpisodeService {
         List<Episode> episodes = episodeRepository.findAllByPodcast_Id(podcastId);
         List<EpisodeDto> episodeDtos = new ArrayList<>();
         for (Episode episode : episodes) {
-            episodeDtos.add(episodeDtoConverter.convertToLimitedEpisodeDto(episode));
+            episodeDtos.add(limitedDtoConverter.convertToLimitedEpisodeDto(episode));
         }
         return episodeDtos;
     }

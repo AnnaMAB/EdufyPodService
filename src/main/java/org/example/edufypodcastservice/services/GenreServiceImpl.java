@@ -4,7 +4,8 @@ package org.example.edufypodcastservice.services;
 import jakarta.transaction.Transactional;
 import org.example.edufypodcastservice.dto.GenreDto;
 import org.example.edufypodcastservice.entities.Genre;
-import org.example.edufypodcastservice.mapper.GenreDtoConverter;
+import org.example.edufypodcastservice.mapper.FullDtoConverter;
+import org.example.edufypodcastservice.mapper.LimitedDtoConverter;
 import org.example.edufypodcastservice.repositories.GenreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,12 +21,14 @@ import java.util.UUID;
 public class GenreServiceImpl implements GenreService {
 
     private final GenreRepository genreRepository;
-    private final GenreDtoConverter genreDtoConverter;
+    private final FullDtoConverter fullDtoConverter;
+    private final LimitedDtoConverter limitedDtoConverter;
 
     @Autowired
-    public GenreServiceImpl(GenreRepository genreRepository, GenreDtoConverter genreDtoConverter) {
+    public GenreServiceImpl(GenreRepository genreRepository, FullDtoConverter fullDtoConverter, LimitedDtoConverter limitedDtoConverter) {
         this.genreRepository = genreRepository;
-        this.genreDtoConverter = genreDtoConverter;
+        this.fullDtoConverter = fullDtoConverter;
+        this.limitedDtoConverter = limitedDtoConverter;
     }
 
     @Transactional
@@ -109,7 +112,7 @@ public class GenreServiceImpl implements GenreService {
         List<Genre> Genre = genreRepository.findAll();
         List<GenreDto> genresDto = new ArrayList<>();
         for (Genre genre : Genre) {
-            genresDto.add(genreDtoConverter.convertToLimitedGenreDto(genre));
+            genresDto.add(limitedDtoConverter.convertToLimitedGenreDto(genre));
         }
         return genresDto;
     }
@@ -129,6 +132,6 @@ public class GenreServiceImpl implements GenreService {
                     String.format("No genre exists with id: %s.", id)
             );
         });
-        return genreDtoConverter.convertToFullGenreDto(genre);
+        return fullDtoConverter.convertToFullGenreDto(genre);
     }
 }

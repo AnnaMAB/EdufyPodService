@@ -6,7 +6,7 @@ import org.example.edufypodcastservice.dto.GenreDto;
 import org.example.edufypodcastservice.dto.PodcastDto;
 import org.example.edufypodcastservice.entities.Genre;
 import org.example.edufypodcastservice.entities.Podcast;
-import org.example.edufypodcastservice.mapper.PodcastDtoConverter;
+import org.example.edufypodcastservice.mapper.FullDtoConverter;
 import org.example.edufypodcastservice.repositories.GenreRepository;
 import org.example.edufypodcastservice.repositories.PodcastRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +23,13 @@ import java.util.UUID;
 public class PodcastServiceImpl implements PodcastService{
 
     private final PodcastRepository podcastRepository;
-    private final PodcastDtoConverter podcastDtoConverter;
+    private final FullDtoConverter fullDtoConverter;
     private final GenreRepository genreRepository;
 
     @Autowired
-    public PodcastServiceImpl(PodcastRepository podcastRepository, PodcastDtoConverter podcastDtoConverter, GenreRepository genreRepository) {
+    public PodcastServiceImpl(PodcastRepository podcastRepository, FullDtoConverter fullDtoConverter, GenreRepository genreRepository) {
         this.podcastRepository = podcastRepository;
-        this.podcastDtoConverter = podcastDtoConverter;
+        this.fullDtoConverter = fullDtoConverter;
         this.genreRepository = genreRepository;
     }
 
@@ -161,7 +161,7 @@ public class PodcastServiceImpl implements PodcastService{
         List<Podcast> podcasts = podcastRepository.findAll();
         List<PodcastDto> podcastDtos = new ArrayList<>();
         for (Podcast podcast : podcasts) {
-            podcastDtos.add(podcastDtoConverter.convertToFullPodcastDto(podcast));
+            podcastDtos.add(fullDtoConverter.convertToFullPodcastDto(podcast));
         }
         return podcastDtos;
     }
@@ -181,7 +181,7 @@ public class PodcastServiceImpl implements PodcastService{
                     String.format("No podcast exists with id: %s.", id)
             );
         });
-        return podcastDtoConverter.convertToFullPodcastDto(podcast);
+        return fullDtoConverter.convertToFullPodcastDto(podcast);
     }
 
     @Override
@@ -189,7 +189,7 @@ public class PodcastServiceImpl implements PodcastService{
         List<Podcast> podcasts = podcastRepository.findByName(podcastName);
         List<PodcastDto> podcastDtos = new ArrayList<>();
         for (Podcast podcast : podcasts) {
-            podcastDtos.add(podcastDtoConverter.convertToFullPodcastDto(podcast));
+            podcastDtos.add(fullDtoConverter.convertToFullPodcastDto(podcast));
         }
         return podcastDtos;
     }
@@ -199,7 +199,7 @@ public class PodcastServiceImpl implements PodcastService{
         List<Podcast> podcasts = podcastRepository.findByGenres_Name(genre);
         List<PodcastDto> podcastDtos = new ArrayList<>();
         for (Podcast podcast : podcasts) {
-            podcastDtos.add(podcastDtoConverter.convertToFullPodcastDto(podcast));
+            podcastDtos.add(fullDtoConverter.convertToFullPodcastDto(podcast));
         }
         return podcastDtos;
     }
