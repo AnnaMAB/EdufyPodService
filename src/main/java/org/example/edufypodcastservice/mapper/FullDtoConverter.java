@@ -31,6 +31,9 @@ public class FullDtoConverter {
         episodeDto.setReleaseDate(episode.getReleaseDate());
         episodeDto.setImageUrl(episode.getImageUrl());
         episodeDto.setThumbnailUrl(episode.getThumbnailUrl());
+        if (episode.getSeasonId() != null) {
+            episodeDto.setSeasonId(episode.getSeasonId());
+        }
         episodeDto.setPodcast(limitedDtoConverter.convertToLimitedPodcastDto(episode.getPodcast()));
 
         return episodeDto;

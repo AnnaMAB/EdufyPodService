@@ -211,4 +211,10 @@ public class EpisodeServiceImpl implements EpisodeService {
         }
         return episodeDtos;
     }
+
+    @Override
+    public Boolean episodeExists(UUID episodeId) {
+        boolean exists = episodeRepository.existsById(episodeId);
+        return exists;
+    }
 }

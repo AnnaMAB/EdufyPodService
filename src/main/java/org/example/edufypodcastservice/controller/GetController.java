@@ -85,6 +85,9 @@ public class GetController {
         return ResponseEntity.ok(genreService.getAllGenres());
     }
 
-
+    @GetMapping("/episodes/{id}/exists")
+    public ResponseEntity<Boolean> episodeExists(@PathVariable UUID id) {
+        return ResponseEntity.ok(episodeService.episodeExists(id));
+    }
 
 }

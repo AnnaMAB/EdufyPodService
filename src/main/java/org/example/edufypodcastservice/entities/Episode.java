@@ -34,6 +34,8 @@ public class Episode {
     private String thumbnailUrl;
     @Column(length = 500, nullable = true)
     private String imageUrl;
+    @Column(nullable = true, columnDefinition = "char(36)", name = "season_id")
+    private UUID seasonId;
 
     public Episode() {
     }
@@ -110,6 +112,14 @@ public class Episode {
         this.imageUrl = imageUrl;
     }
 
+    public UUID getSeasonId() {
+        return seasonId;
+    }
+
+    public void setSeasonId(UUID seasonId) {
+        this.seasonId = seasonId;
+    }
+
     @Override
     public String toString() {
         return "Episode{" +
@@ -121,6 +131,7 @@ public class Episode {
                 ", durationSeconds=" + durationSeconds +
                 ", thumbnailUrl='" + thumbnailUrl + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
+                ", seasonId=" + seasonId +
                 '}';
     }
 }

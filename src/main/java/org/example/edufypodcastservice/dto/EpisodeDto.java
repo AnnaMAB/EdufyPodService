@@ -1,6 +1,7 @@
 package org.example.edufypodcastservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.persistence.Column;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -18,6 +19,7 @@ public class EpisodeDto {
     private UUID podcastId;
     private String thumbnailUrl;
     private String imageUrl;
+    private UUID seasonId;
 
     public EpisodeDto() {
     }
@@ -102,6 +104,14 @@ public class EpisodeDto {
         this.imageUrl = imageUrl;
     }
 
+    public UUID getSeasonId() {
+        return seasonId;
+    }
+
+    public void setSeasonId(UUID seasonId) {
+        this.seasonId = seasonId;
+    }
+
     @Override
     public String toString() {
         return "EpisodeDto{" +
@@ -115,6 +125,7 @@ public class EpisodeDto {
                 ", podcastId=" + podcastId +
                 ", thumbnailUrl='" + thumbnailUrl + '\'' +
                 ", imageUrl='" + imageUrl + '\'' +
+                ", seasonId=" + seasonId +
                 '}';
     }
 }
