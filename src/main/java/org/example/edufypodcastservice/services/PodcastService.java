@@ -18,5 +18,7 @@ public interface PodcastService {
     PodcastDto getPodcastById(UUID id);
     List<PodcastDto> getPodcastByName(String podcastName);
     List<PodcastDto> getPodcastsByGenre(String genre);
+    Boolean podcastExists(UUID id);
+    Boolean podcastAssociatedWithProducer(UUID podcastId, UUID producerId);
 
 }

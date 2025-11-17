@@ -203,4 +203,35 @@ public class PodcastServiceImpl implements PodcastService{
         }
         return podcastDtos;
     }
+
+    @Override
+    public Boolean podcastExists(UUID id) {
+        boolean exists = podcastRepository.existsById(id);
+        return exists;
+    }
+
+    @Override
+    public Boolean podcastAssociatedWithProducer(UUID podcastId, UUID producerId) {
+        if (podcastId == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "PodcastId must be provided"
+            );
+        }
+        Podcast podcast = podcastRepository.findById(podcastId).orElseThrow(() -> {
+            //   F_LOG.warn("{} tried to book a workout with id {} that doesn't exist.", role, workoutToBook.getId());
+            return new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    String.format("No podcast exists with id: %s.", podcastId)
+            );
+
+        });
+        if (producerId == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "ProducerId must be provided"
+            );
+        }
+        return podcast.getProducerId().equals(producerId);
+    }
 }
