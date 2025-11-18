@@ -51,8 +51,8 @@ public class EpisodeServiceImpl implements EpisodeService {
         if (episodeDto.getDurationSeconds() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Duration is required");
         }
-        if (episodeDto.getPodcast() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "PodcastId is required");
+        if (episodeDto.getPodcast() != null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "PodcastId, not podcastDto, is required");
         }
         if (episodeDto.getThumbnailUrl() != null && !episodeDto.getThumbnailUrl().isBlank()) {
             episode.setThumbnailUrl(episodeDto.getThumbnailUrl());
@@ -216,5 +216,51 @@ public class EpisodeServiceImpl implements EpisodeService {
     public Boolean episodeExists(UUID episodeId) {
         boolean exists = episodeRepository.existsById(episodeId);
         return exists;
+    }
+
+    @Override
+    public EpisodeDto addSeasonToEpisode(UUID episodeId, UUID seasonId) {
+        if(episodeId == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Episode id is required");
+        }
+        if(seasonId == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Season id is required");
+        }
+        Episode episode = episodeRepository.findById(episodeId).orElseThrow(() -> {
+            //   F_LOG.warn("{} tried to book a workout with id {} that doesn't exist.", role, workoutToBook.getId());
+            return new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    String.format("No episode exists with id: %s.", episodeId)
+            );
+        });
+        if (episode.getSeasonId() != null && !episode.getSeasonId().equals(seasonId)) {
+            episode.setSeasonId(seasonId);
+            episodeRepository.save(episode);
+        }
+        return limitedDtoConverter.convertToLimitedEpisodeDto(episode);
+    }
+
+    @Override
+    public EpisodeDto removeSeasonFromEpisode(UUID episodeId, UUID seasonId) {
+        if(episodeId == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Episode id is required");
+        }
+        if(seasonId == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Season id is required");
+        }
+        Episode episode = episodeRepository.findById(episodeId).orElseThrow(() -> {
+            //   F_LOG.warn("{} tried to book a workout with id {} that doesn't exist.", role, workoutToBook.getId());
+            return new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    String.format("No episode exists with id: %s.", episodeId)
+            );
+        });
+        if (episode.getSeasonId() != null && episode.getSeasonId().equals(seasonId)) {
+            episode.setSeasonId(null);
+            episodeRepository.save(episode);
+        } else {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "SeasonId is not currently assigned to episode");
+        }
+        return limitedDtoConverter.convertToLimitedEpisodeDto(episode);
     }
 }

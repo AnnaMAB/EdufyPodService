@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/podcasts/podcasts")
+@RequestMapping("/pods/podcasts/podcasts")
 public class PodcastController {
 
     private final PodcastServiceImpl podcastService;
@@ -44,8 +44,6 @@ public class PodcastController {
     public ResponseEntity<List<PodcastDto>> getAllPodcastsByGenre(@RequestParam String genre) {
         return ResponseEntity.ok(podcastService.getPodcastsByGenre(genre));
     }
-
-
 
     @GetMapping("/{id}/exists")
     public ResponseEntity<Boolean> podcastExists(@PathVariable UUID id) {

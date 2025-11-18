@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/podcasts/genres")
+@RequestMapping("/pods/podcasts/genres")
 public class GenreController {
 
     private final GenreServiceImpl genreService;
@@ -54,7 +54,5 @@ public class GenreController {
     public ResponseEntity<String> deleteGenre(@PathVariable UUID id) {
         return ResponseEntity.ok(genreService.deleteGenre(id));
     }
-
-
 
 }

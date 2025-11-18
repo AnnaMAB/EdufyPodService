@@ -58,7 +58,7 @@ public class FullDtoConverter {
         List<Genre> genres = podcast.getGenres();
         List<GenreDto> genreDtos = new ArrayList<>();
         for (Genre genre : genres) {
-            GenreDto genreDto = convertToFullGenreDto(genre);
+            GenreDto genreDto = limitedDtoConverter.convertToLimitedGenreDto(genre);
             genreDtos.add(genreDto);
         }
         podcastDto.setGenres(genreDtos);

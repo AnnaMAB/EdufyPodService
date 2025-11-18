@@ -16,4 +16,7 @@ public interface EpisodeService {
     List<EpisodeDto> getAllEpisodes();
     List<EpisodeDto> getEpisodesByPodcastId(UUID podcastId);
     Boolean episodeExists(UUID episodeId);
+    EpisodeDto addSeasonToEpisode(UUID episodeId, UUID seasonId);
+    EpisodeDto removeSeasonFromEpisode(UUID episodeId, UUID seasonId);
+
 }

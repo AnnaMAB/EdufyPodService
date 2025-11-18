@@ -19,7 +19,7 @@ public class Genre {
     private UUID id;
     @Column(length = 40, nullable = false)
     private String name;
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "genre_podcast", joinColumns = @JoinColumn(name = "genre_id"), inverseJoinColumns = @JoinColumn(name = "podcast_id"))
     @JsonIgnoreProperties({"episodes","genres"})
     private List<Podcast> podcasts = new ArrayList<>();

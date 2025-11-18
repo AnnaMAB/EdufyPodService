@@ -22,9 +22,10 @@ public class Podcast {
     private String description;
     @OneToMany(mappedBy = "podcast", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Episode> episodes = new ArrayList<>();
-    @ManyToMany(mappedBy = "podcasts",  fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "podcasts",  fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Genre> genres = new ArrayList<>();
-    @Column(name = "producer_id",columnDefinition = "char(36)", nullable = false)
+    @Column(name = "producer_id", columnDefinition = "char(36)", nullable = false)
+    @JdbcTypeCode(SqlTypes.CHAR)
     private UUID producerId;
     @Column(length = 500, nullable = true)
     private String thumbnailUrl;

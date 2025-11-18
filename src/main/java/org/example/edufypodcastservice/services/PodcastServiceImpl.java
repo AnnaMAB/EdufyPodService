@@ -1,11 +1,14 @@
 package org.example.edufypodcastservice.services;
 
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.example.edufypodcastservice.dto.GenreDto;
 import org.example.edufypodcastservice.dto.PodcastDto;
 import org.example.edufypodcastservice.entities.Genre;
 import org.example.edufypodcastservice.entities.Podcast;
+import org.example.edufypodcastservice.external.ProducerApiClient;
 import org.example.edufypodcastservice.mapper.FullDtoConverter;
 import org.example.edufypodcastservice.repositories.GenreRepository;
 import org.example.edufypodcastservice.repositories.PodcastRepository;
@@ -25,17 +28,33 @@ public class PodcastServiceImpl implements PodcastService{
     private final PodcastRepository podcastRepository;
     private final FullDtoConverter fullDtoConverter;
     private final GenreRepository genreRepository;
+    private final ProducerApiClient producerApiClient;
 
     @Autowired
-    public PodcastServiceImpl(PodcastRepository podcastRepository, FullDtoConverter fullDtoConverter, GenreRepository genreRepository) {
+    public PodcastServiceImpl(PodcastRepository podcastRepository, FullDtoConverter fullDtoConverter,
+                              GenreRepository genreRepository, ProducerApiClient producerApiClient) {
         this.podcastRepository = podcastRepository;
         this.fullDtoConverter = fullDtoConverter;
         this.genreRepository = genreRepository;
+        this.producerApiClient = producerApiClient;
+    }
+
+
+    @Override
+    public Podcast addPodcast(PodcastDto podcastDto) {
+        Podcast saved = addPodcastDetails(podcastDto);
+        try {
+            producerApiClient.addPodcastToProducer(saved.getId(), podcastDto.getProducerId());
+        } catch (Exception e) {
+            podcastRepository.deleteById(saved.getId());
+            throw new RuntimeException("Failed to add podcast to producer. Podcast deleted.", e);
+        }
+
+        return saved;
     }
 
     @Transactional
-    @Override
-    public Podcast addPodcast(PodcastDto podcastDto) {
+    public Podcast addPodcastDetails(PodcastDto podcastDto) {
         Podcast podcast = new Podcast();
         if (podcastDto.getName() == null || podcastDto.getName().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name is required");
@@ -48,6 +67,9 @@ public class PodcastServiceImpl implements PodcastService{
         }
         if (podcastDto.getProducerId() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Producer is required");
+        }
+        if (!producerApiClient.producerExists(podcastDto.getProducerId())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Producer don't exists");
         }
         if (podcastDto.getImageUrl() != null && !podcastDto.getImageUrl().isBlank()) {
             podcast.setImageUrl(podcastDto.getImageUrl());
@@ -64,10 +86,13 @@ public class PodcastServiceImpl implements PodcastService{
                 Optional<Genre> genre = genreRepository.findById(genreDto.getId());
                 if (genre.isPresent()) {
                     genres.add(genre.get());
+                    genre.get().getPodcasts().add(podcast);
+                    genreRepository.save(genre.get());
                 }
             }
         }
         podcast.setGenres(genres);
+        podcast.setProducerId(podcastDto.getProducerId());
         return podcastRepository.save(podcast);
     }
 
@@ -84,7 +109,6 @@ public class PodcastServiceImpl implements PodcastService{
                     String.format("No podcast exists with id: %s.", podcastDto.getId())
             );
         });
-
         if (podcastDto.getName() != null && !podcastDto.getName().equals(podcast.getName())) {
             if(podcastDto.getName().isBlank()) {
                 // F_LOG.warn("{} tried to update a workout with invalid title.", role);
@@ -113,6 +137,11 @@ public class PodcastServiceImpl implements PodcastService{
         }
 
         if (podcastDto.getProducerId() != null && !podcastDto.getProducerId().equals(podcast.getProducerId())) {
+            if (!producerApiClient.producerExists(podcastDto.getProducerId())) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Producer don't exists");
+            }
+            producerApiClient.removePodcastFromProducer(podcast.getId(), podcast.getProducerId());
+            producerApiClient.addPodcastToProducer(podcast.getId(), podcastDto.getProducerId());
             podcast.setProducerId(podcastDto.getProducerId());
         }
         if (podcastDto.getImageUrl() != null && !podcastDto.getImageUrl().equals(podcast.getImageUrl())) {
@@ -129,6 +158,8 @@ public class PodcastServiceImpl implements PodcastService{
                     Optional<Genre> genre = genreRepository.findById(genreDto.getId());
                     if (genre.isPresent()) {
                         genres.add(genre.get());
+                        genre.get().getPodcasts().add(podcast);
+                        genreRepository.save(genre.get());
                     }
                 }
             }
@@ -146,12 +177,16 @@ public class PodcastServiceImpl implements PodcastService{
                     "Id must be provided"
             );
         }
-        if (!podcastRepository.existsById(podcastId)) {
-            throw new ResponseStatusException(
+        Podcast podcast = podcastRepository.findById(podcastId).orElseThrow(() -> {
+            //   F_LOG.warn("{} tried to book a workout with id {} that doesn't exist.", role, workoutToBook.getId());
+            return new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
                     String.format("No podcast exists with id: %s.", podcastId)
             );
-        }
+        });
+        UUID podcastUuid = podcast.getId();
+        UUID producerUuid = podcast.getProducerId();
+        producerApiClient.removePodcastFromProducer(podcastUuid, producerUuid);
         podcastRepository.deleteById(podcastId);
         return String.format("Podcast with Id: %s, and associated episodes have been successfully deleted.", podcastId);
     }
@@ -232,6 +267,9 @@ public class PodcastServiceImpl implements PodcastService{
                     "ProducerId must be provided"
             );
         }
-        return podcast.getProducerId().equals(producerId);
+        if (podcast.getProducerId() == null || !podcast.getProducerId().equals(producerId)) {
+            return false;
+        }
+        return true;
     }
 }

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/podcasts/episodes")
+@RequestMapping("/pods/podcasts/episodes")
 public class EpisodeController {
 
     private final EpisodeServiceImpl episodeService;
@@ -36,9 +36,9 @@ public class EpisodeController {
     }
 
 
-    @GetMapping("/getpodcastepisodes/")
-    public ResponseEntity<List<EpisodeDto>> getEpisodesByPodcast(@RequestParam UUID id) {
-        return ResponseEntity.ok(episodeService.getEpisodesByPodcastId(id));
+    @GetMapping("/getpodcastepisodes/{podcastId}")
+    public ResponseEntity<List<EpisodeDto>> getEpisodesByPodcast(@PathVariable UUID podcastId) {
+        return ResponseEntity.ok(episodeService.getEpisodesByPodcastId(podcastId));
     }
 
 
@@ -67,5 +67,14 @@ public class EpisodeController {
     }
 
 
+    @PutMapping("/addseasontoepisode/{episodeId}/{seasonId}")
+    public ResponseEntity<EpisodeDto> addSeasonToEpisode(@PathVariable UUID episodeId, @PathVariable UUID seasonId) {
+        return ResponseEntity.ok(episodeService.addSeasonToEpisode(episodeId, seasonId));
+    }
+
+    @PutMapping("/removeseasonfromepisode/{episodeId}/{seasonId}")
+    public ResponseEntity<EpisodeDto> removeSeasonFromEpisode(@PathVariable UUID episodeId, @PathVariable UUID seasonId) {
+        return ResponseEntity.ok(episodeService.removeSeasonFromEpisode(episodeId, seasonId));
+    }
 
 }

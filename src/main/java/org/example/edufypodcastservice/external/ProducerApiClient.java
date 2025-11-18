@@ -1,11 +1,18 @@
 package org.example.edufypodcastservice.external;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @Service
@@ -27,7 +34,7 @@ public class ProducerApiClient {
     public boolean producerExists(UUID producerId) {
         try {
             Boolean producerExistsResponse = restClient.get()
-                    .uri("http://localhost:8080/podcasts/api/producer/{id}/exists", producerId)//TODO --- rätt adress?
+                    .uri(producerExistsApiUrl, producerId)
                     .retrieve()
                     .body(Boolean.class);
             return producerExistsResponse;
@@ -35,6 +42,67 @@ public class ProducerApiClient {
             throw new IllegalStateException("Failed to check producer " + producerId, e);
         }
     }
+
+
+    public void removePodcastFromProducer(UUID podcastId, UUID producerId) {
+        try {
+            ResponseEntity<Void> response = restClient.put()
+                    .uri(producerRemoveApiUrl, producerId, podcastId)
+                    .retrieve()
+                    .toBodilessEntity();
+        } catch (HttpClientErrorException e) {
+            HttpStatusCode status = e.getStatusCode();
+            String body = e.getResponseBodyAsString();
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode json = mapper.readTree(body);
+
+                String message = json.path("message").asText();
+                String path = json.path("path").asText();
+
+                throw new IllegalStateException(
+                        String.format("Failed to remove podcast from producer. Status %s, %s, Path:%s",
+                                status, message, path), e);
+            } catch (IOException parseEx) {
+                throw new IllegalStateException("Failed to remove podcast from producer. Status=" + status + " body=" + body, e);
+            }
+        } catch (ResourceAccessException ex) {
+            throw new IllegalStateException("Could not connect to producer service: " + ex.getMessage(), ex);
+        } catch (RestClientException ex) {
+            throw new IllegalStateException("Unexpected error calling producer service", ex);
+        }
+    }
+
+
+    public void addPodcastToProducer(UUID podcastId, UUID producerId) {
+        try {
+            ResponseEntity<Void> response = restClient.put()
+                    .uri(producerAddApiUrl, producerId, podcastId)
+                    .retrieve()
+                    .toBodilessEntity();
+        } catch (HttpClientErrorException e) {
+            HttpStatusCode status = e.getStatusCode();
+            String body = e.getResponseBodyAsString();
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode json = mapper.readTree(body);
+
+                String message = json.path("message").asText();
+                String path = json.path("path").asText();
+
+                throw new IllegalStateException(
+                        String.format("Failed to add podcast to producer. Status %s, %s, Path:%s",
+                                status, message, path), e);
+            } catch (IOException parseEx) {
+                throw new IllegalStateException("Failed to add podcast to producer . Status=" + status + " body=" + body, e);
+            }
+        } catch (ResourceAccessException ex) {
+            throw new IllegalStateException("Could not connect to producer service: " + ex.getMessage(), ex);
+        } catch (RestClientException ex) {
+            throw new IllegalStateException("Unexpected error calling producer service", ex);
+        }
+    }
+
 
 
 }

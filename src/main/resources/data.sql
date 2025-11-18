@@ -5,9 +5,9 @@ INSERT INTO genre (genre_id, name, thumbnail_url, image_url) VALUES
 ('33333333-3333-3333-3333-333333333333', 'True Crime', 'https://cdn.example.com/genres/crime_thumb.jpg', 'https://cdn.example.com/genres/crime_image.jpg');
 
 INSERT INTO podcast (podcast_id, name, description, thumbnail_url, image_url, producer_id) VALUES
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'CodeTalk', 'A podcast about software development, architecture, and frameworks.', 'https://cdn.example.com/podcasts/codetalk_thumb.jpg', 'https://cdn.example.com/podcasts/codetalk_image.jpg', 'some-producer-id'),
-('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'LaughTrack', 'Comedy podcast with improv and absurd humor.', 'https://cdn.example.com/podcasts/laughtrack_thumb.jpg', 'https://cdn.example.com/podcasts/laughtrack_image.jpg', 'some-producer-id'),
-('cccccccc-cccc-cccc-cccc-cccccccccccc', 'CrimeLens', 'Investigating real-world crime stories from around the world.', 'https://cdn.example.com/podcasts/crimelens_thumb.jpg', 'https://cdn.example.com/podcasts/crimelens_image.jpg', 'some-producer-id');
+('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'CodeTalk', 'A podcast about software development, architecture, and frameworks.', 'https://cdn.example.com/podcasts/codetalk_thumb.jpg', 'https://cdn.example.com/podcasts/codetalk_image.jpg', '91111111-1111-1111-1111-111111111111'),
+('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'LaughTrack', 'Comedy podcast with improv and absurd humor.', 'https://cdn.example.com/podcasts/laughtrack_thumb.jpg', 'https://cdn.example.com/podcasts/laughtrack_image.jpg', '92222222-2222-2222-2222-222222222222'),
+('cccccccc-cccc-cccc-cccc-cccccccccccc', 'CrimeLens', 'Investigating real-world crime stories from around the world.', 'https://cdn.example.com/podcasts/crimelens_thumb.jpg', 'https://cdn.example.com/podcasts/crimelens_image.jpg', '93333333-3333-3333-3333-333333333333');
 
 -- GENRE–PODCAST RELATIONS
 INSERT INTO genre_podcast (genre_id, podcast_id) VALUES
