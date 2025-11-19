@@ -40,9 +40,13 @@ public class GenreServiceImpl implements GenreService {
         }
         if (genreDto.getImageUrl() != null || !genreDto.getImageUrl().isBlank()) {
             genre.setImageUrl(genreDto.getImageUrl());
+        }else {
+            genre.setImageUrl("https://default/image.url");
         }
         if (genreDto.getThumbnailUrl() != null || !genreDto.getThumbnailUrl().isBlank()) {
             genre.setThumbnailUrl(genreDto.getThumbnailUrl());
+        }else {
+            genre.setThumbnailUrl("https://default/thumbnail.url");
         }
         if (genreDto.getPodcasts() != null && !genreDto.getPodcasts().isEmpty()) {
             throw new ResponseStatusException(

@@ -56,9 +56,13 @@ public class EpisodeServiceImpl implements EpisodeService {
         }
         if (episodeDto.getThumbnailUrl() != null && !episodeDto.getThumbnailUrl().isBlank()) {
             episode.setThumbnailUrl(episodeDto.getThumbnailUrl());
+        }else {
+            episode.setThumbnailUrl("https://default/thumbnail.url");
         }
         if (episodeDto.getImageUrl() != null && !episodeDto.getImageUrl().isBlank()) {
             episode.setImageUrl(episodeDto.getImageUrl());
+        }else {
+            episode.setImageUrl("https://default/image.url");
         }
         if (episodeDto.getPodcastId() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "PodcastId is required");
@@ -233,11 +237,12 @@ public class EpisodeServiceImpl implements EpisodeService {
                     String.format("No episode exists with id: %s.", episodeId)
             );
         });
-        if (episode.getSeasonId() != null && !episode.getSeasonId().equals(seasonId)) {
+        System.out.println(seasonId);
+        if (episode.getSeasonId() == null || !episode.getSeasonId().equals(seasonId)) {
             episode.setSeasonId(seasonId);
             episodeRepository.save(episode);
         }
-        return limitedDtoConverter.convertToLimitedEpisodeDto(episode);
+        return fullDtoConverter.convertToFullEpisodeDto(episode);
     }
 
     @Override

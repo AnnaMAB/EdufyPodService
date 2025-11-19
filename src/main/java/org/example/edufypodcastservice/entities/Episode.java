@@ -35,6 +35,7 @@ public class Episode {
     @Column(length = 500, nullable = true)
     private String imageUrl;
     @Column(nullable = true, columnDefinition = "char(36)", name = "season_id")
+    @JdbcTypeCode(SqlTypes.CHAR)
     private UUID seasonId;
 
     public Episode() {

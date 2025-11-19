@@ -73,9 +73,13 @@ public class PodcastServiceImpl implements PodcastService{
         }
         if (podcastDto.getImageUrl() != null && !podcastDto.getImageUrl().isBlank()) {
             podcast.setImageUrl(podcastDto.getImageUrl());
+        }else {
+            podcast.setImageUrl("https://default/image.url");
         }
         if (podcastDto.getThumbnailUrl() != null && !podcastDto.getThumbnailUrl().isBlank()) {
             podcast.setThumbnailUrl(podcastDto.getThumbnailUrl());
+        }else {
+            podcast.setThumbnailUrl("https://default/thumbnail.url");
         }
         podcast.setName(podcastDto.getName());
         podcast.setDescription(podcastDto.getDescription());
