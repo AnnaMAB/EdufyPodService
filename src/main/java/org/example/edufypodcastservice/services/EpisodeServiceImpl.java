@@ -3,6 +3,7 @@ package org.example.edufypodcastservice.services;
 import jakarta.transaction.Transactional;
 import org.example.edufypodcastservice.dto.EpisodeDto;
 import org.example.edufypodcastservice.entities.Episode;
+import org.example.edufypodcastservice.entities.Genre;
 import org.example.edufypodcastservice.entities.Podcast;
 import org.example.edufypodcastservice.mapper.FullDtoConverter;
 import org.example.edufypodcastservice.mapper.LimitedDtoConverter;
@@ -10,13 +11,12 @@ import org.example.edufypodcastservice.repositories.EpisodeRepository;
 import org.example.edufypodcastservice.repositories.PodcastRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 
 @Service
@@ -267,5 +267,27 @@ public class EpisodeServiceImpl implements EpisodeService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "SeasonId is not currently assigned to episode");
         }
         return limitedDtoConverter.convertToLimitedEpisodeDto(episode);
+    }
+
+    @Override
+    public Map<UUID, List<String>> getIdAndGenreFromUrl(String url) {
+        Map<UUID, List<String>> idAndGenre = new HashMap<>();
+        Episode episode = episodeRepository.findByUrl(url).orElseThrow(() -> {
+               //F_LOG.warn("{} tried to book a workout with id {} that doesn't exist.", role, workoutToBook.getId());
+            return new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    String.format("No episode exists with url: %s.", url)
+            );
+        });
+        List<Genre> genres = episode.getPodcast().getGenres();
+        List<String> genreNames = new ArrayList<>();
+        for (Genre genre : genres) {
+            genreNames.add(genre.getName());
+        }
+
+        idAndGenre.put(episode.getId(), genreNames);
+
+        return idAndGenre;
+
     }
 }

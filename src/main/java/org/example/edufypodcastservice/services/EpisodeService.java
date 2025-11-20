@@ -5,6 +5,7 @@ import org.example.edufypodcastservice.dto.EpisodeDto;
 import org.example.edufypodcastservice.entities.Episode;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface EpisodeService {
@@ -18,5 +19,6 @@ public interface EpisodeService {
     Boolean episodeExists(UUID episodeId);
     EpisodeDto addSeasonToEpisode(UUID episodeId, UUID seasonId);
     EpisodeDto removeSeasonFromEpisode(UUID episodeId, UUID seasonId);
+    Map<UUID, List<String>> getIdAndGenreFromUrl(String url);
 
 }

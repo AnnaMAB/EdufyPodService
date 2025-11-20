@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -41,6 +42,13 @@ public class EpisodeController {
     public ResponseEntity<List<EpisodeDto>> getEpisodesByPodcast(@PathVariable UUID podcastId) {
         return ResponseEntity.ok(episodeService.getEpisodesByPodcastId(podcastId));
     }
+
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @GetMapping("/getidandgenrefromurl/{url}")
+    public ResponseEntity<Map<UUID, List<String>>> getIdAndGenreFromUrl(@PathVariable String url) {
+        return ResponseEntity.ok(episodeService.getIdAndGenreFromUrl(url));
+    }
+
 
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @GetMapping("/{id}/exists")
