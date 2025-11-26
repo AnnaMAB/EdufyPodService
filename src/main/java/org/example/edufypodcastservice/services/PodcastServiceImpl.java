@@ -4,6 +4,9 @@ package org.example.edufypodcastservice.services;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.example.edufypodcastservice.converters.UserInfo;
 import org.example.edufypodcastservice.dto.GenreDto;
 import org.example.edufypodcastservice.dto.PodcastDto;
 import org.example.edufypodcastservice.entities.Genre;
@@ -29,19 +32,23 @@ public class PodcastServiceImpl implements PodcastService{
     private final FullDtoConverter fullDtoConverter;
     private final GenreRepository genreRepository;
     private final ProducerApiClient producerApiClient;
+    private final UserInfo userInfo;
+    private static final Logger F_LOG = LogManager.getLogger("functionality");
 
     @Autowired
     public PodcastServiceImpl(PodcastRepository podcastRepository, FullDtoConverter fullDtoConverter,
-                              GenreRepository genreRepository, ProducerApiClient producerApiClient) {
+                              GenreRepository genreRepository, ProducerApiClient producerApiClient, UserInfo userInfo) {
         this.podcastRepository = podcastRepository;
         this.fullDtoConverter = fullDtoConverter;
         this.genreRepository = genreRepository;
         this.producerApiClient = producerApiClient;
+        this.userInfo = userInfo;
     }
 
 
     @Override
     public Podcast addPodcast(PodcastDto podcastDto) {
+        String role = userInfo.getRole();
         Podcast saved = addPodcastDetails(podcastDto);
         try {
             producerApiClient.addPodcastToProducer(saved.getId(), podcastDto.getProducerId());
@@ -55,6 +62,7 @@ public class PodcastServiceImpl implements PodcastService{
 
     @Transactional
     public Podcast addPodcastDetails(PodcastDto podcastDto) {
+        String role = userInfo.getRole();
         Podcast podcast = new Podcast();
         if (podcastDto.getName() == null || podcastDto.getName().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name is required");
@@ -103,6 +111,7 @@ public class PodcastServiceImpl implements PodcastService{
     @Transactional
     @Override
     public Podcast updatePodcast(PodcastDto podcastDto) {
+        String role = userInfo.getRole();
         if(podcastDto.getId() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Podcast id is required");
         }
@@ -175,6 +184,7 @@ public class PodcastServiceImpl implements PodcastService{
     @Transactional
     @Override
     public String deletePodcast(UUID podcastId) {
+        String role = userInfo.getRole();
          if (podcastId == null) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
@@ -207,6 +217,7 @@ public class PodcastServiceImpl implements PodcastService{
 
     @Override
     public PodcastDto getPodcastById(UUID id) {
+        String role = userInfo.getRole();
         if (id == null) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
@@ -251,6 +262,7 @@ public class PodcastServiceImpl implements PodcastService{
 
     @Override
     public Boolean podcastAssociatedWithProducer(UUID podcastId, UUID producerId) {
+        String role = userInfo.getRole();
         if (podcastId == null) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,

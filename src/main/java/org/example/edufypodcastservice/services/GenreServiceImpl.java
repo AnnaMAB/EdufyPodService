@@ -2,6 +2,9 @@ package org.example.edufypodcastservice.services;
 
 
 import jakarta.transaction.Transactional;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.example.edufypodcastservice.converters.UserInfo;
 import org.example.edufypodcastservice.dto.GenreDto;
 import org.example.edufypodcastservice.entities.Genre;
 import org.example.edufypodcastservice.mapper.FullDtoConverter;
@@ -23,17 +26,22 @@ public class GenreServiceImpl implements GenreService {
     private final GenreRepository genreRepository;
     private final FullDtoConverter fullDtoConverter;
     private final LimitedDtoConverter limitedDtoConverter;
+    private final UserInfo userInfo;
+    private static final Logger F_LOG = LogManager.getLogger("functionality");
 
     @Autowired
-    public GenreServiceImpl(GenreRepository genreRepository, FullDtoConverter fullDtoConverter, LimitedDtoConverter limitedDtoConverter) {
+    public GenreServiceImpl(GenreRepository genreRepository, FullDtoConverter fullDtoConverter,
+                            LimitedDtoConverter limitedDtoConverter, UserInfo userInfo) {
         this.genreRepository = genreRepository;
         this.fullDtoConverter = fullDtoConverter;
         this.limitedDtoConverter = limitedDtoConverter;
+        this.userInfo = userInfo;
     }
 
     @Transactional
     @Override
     public Genre addGenre(GenreDto genreDto) {
+        String role = userInfo.getRole();
         Genre genre = new Genre();
         if (genreDto.getName() == null || genreDto.getName().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name is required");
@@ -61,6 +69,7 @@ public class GenreServiceImpl implements GenreService {
     @Transactional
     @Override
     public Genre updateGenre(GenreDto genreDto) {
+        String role = userInfo.getRole();
         if(genreDto.getId() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Genre id is required");
         }
@@ -95,6 +104,7 @@ public class GenreServiceImpl implements GenreService {
     @Transactional
     @Override
     public String deleteGenre(UUID genreId) {
+        String role = userInfo.getRole();
         if (genreId == null) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
@@ -123,6 +133,7 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     public GenreDto getGenreById(UUID id) {
+        String role = userInfo.getRole();
         if (id == null) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,

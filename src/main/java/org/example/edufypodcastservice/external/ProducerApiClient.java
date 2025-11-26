@@ -2,6 +2,9 @@ package org.example.edufypodcastservice.external;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.example.edufypodcastservice.converters.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
@@ -25,13 +28,17 @@ public class ProducerApiClient {
     private String producerAddApiUrl;
     @Value("${producerRemove.api.url}")
     private String producerRemoveApiUrl;
+    private final UserInfo userInfo;
+    private static final Logger F_LOG = LogManager.getLogger("functionality");
 
     @Autowired
-    public ProducerApiClient(RestClient.Builder restClientBuilder) {
+    public ProducerApiClient(RestClient.Builder restClientBuilder, UserInfo userInfo) {
         this.restClient = restClientBuilder.build();
+        this.userInfo = userInfo;
     }
 
     public boolean producerExists(UUID producerId) {
+        String role = userInfo.getRole();
         try {
             Boolean producerExistsResponse = restClient.get()
                     .uri(producerExistsApiUrl, producerId)
@@ -45,6 +52,7 @@ public class ProducerApiClient {
 
 
     public void removePodcastFromProducer(UUID podcastId, UUID producerId) {
+        String role = userInfo.getRole();
         try {
             ResponseEntity<Void> response = restClient.put()
                     .uri(producerRemoveApiUrl, producerId, podcastId)
@@ -75,6 +83,7 @@ public class ProducerApiClient {
 
 
     public void addPodcastToProducer(UUID podcastId, UUID producerId) {
+        String role = userInfo.getRole();
         try {
             ResponseEntity<Void> response = restClient.put()
                     .uri(producerAddApiUrl, producerId, podcastId)
@@ -102,7 +111,6 @@ public class ProducerApiClient {
             throw new IllegalStateException("Unexpected error calling producer service", ex);
         }
     }
-
 
 
 }

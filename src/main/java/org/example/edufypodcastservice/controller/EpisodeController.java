@@ -44,8 +44,8 @@ public class EpisodeController {
     }
 
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    @GetMapping("/getidandgenrefromurl/{url}")
-    public ResponseEntity<Map<UUID, List<String>>> getIdAndGenreFromUrl(@PathVariable String url) {
+    @GetMapping("/getidandgenrefromurl")
+    public ResponseEntity<Map<UUID, List<String>>> getIdAndGenreFromUrl(@RequestParam String url) {
         return ResponseEntity.ok(episodeService.getIdAndGenreFromUrl(url));
     }
 

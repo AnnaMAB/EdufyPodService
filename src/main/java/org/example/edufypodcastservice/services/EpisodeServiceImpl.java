@@ -1,6 +1,9 @@
 package org.example.edufypodcastservice.services;
 
 import jakarta.transaction.Transactional;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.example.edufypodcastservice.converters.UserInfo;
 import org.example.edufypodcastservice.dto.EpisodeDto;
 import org.example.edufypodcastservice.entities.Episode;
 import org.example.edufypodcastservice.entities.Genre;
@@ -26,18 +29,23 @@ public class EpisodeServiceImpl implements EpisodeService {
     private final FullDtoConverter fullDtoConverter;
     private final LimitedDtoConverter limitedDtoConverter;
     private final PodcastRepository podcastRepository;
+    private final UserInfo userInfo;
+    private static final Logger F_LOG = LogManager.getLogger("functionality");
 
     @Autowired
-    public EpisodeServiceImpl(EpisodeRepository episodeRepository, FullDtoConverter fullDtoConverter, LimitedDtoConverter limitedDtoConverter, PodcastRepository podcastRepository) {
+    public EpisodeServiceImpl(EpisodeRepository episodeRepository, FullDtoConverter fullDtoConverter,
+                              LimitedDtoConverter limitedDtoConverter, PodcastRepository podcastRepository, UserInfo userInfo) {
         this.episodeRepository = episodeRepository;
         this.fullDtoConverter = fullDtoConverter;
         this.limitedDtoConverter = limitedDtoConverter;
         this.podcastRepository = podcastRepository;
+        this.userInfo = userInfo;
     }
 
     @Transactional
     @Override
     public Episode addEpisode(EpisodeDto episodeDto) {
+        String role = userInfo.getRole();
         Episode episode = new Episode();
         if (episodeDto.getTitle() == null || episodeDto.getTitle().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Title is required");
@@ -87,6 +95,7 @@ public class EpisodeServiceImpl implements EpisodeService {
     @Transactional
     @Override
     public Episode updateEpisode(EpisodeDto episodeDto) {
+        String role = userInfo.getRole();
         if(episodeDto.getId() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Episode id is required");
         }
@@ -162,6 +171,7 @@ public class EpisodeServiceImpl implements EpisodeService {
     @Transactional
     @Override
     public String deleteEpisode(UUID episodeId) {
+        String role = userInfo.getRole();
         if (episodeId == null) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
@@ -180,6 +190,7 @@ public class EpisodeServiceImpl implements EpisodeService {
 
     @Override
     public EpisodeDto getEpisode(UUID episodeId) {
+        String role = userInfo.getRole();
         if (episodeId == null) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
@@ -224,6 +235,7 @@ public class EpisodeServiceImpl implements EpisodeService {
 
     @Override
     public EpisodeDto addSeasonToEpisode(UUID episodeId, UUID seasonId) {
+        String role = userInfo.getRole();
         if(episodeId == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Episode id is required");
         }
@@ -247,6 +259,7 @@ public class EpisodeServiceImpl implements EpisodeService {
 
     @Override
     public EpisodeDto removeSeasonFromEpisode(UUID episodeId, UUID seasonId) {
+        String role = userInfo.getRole();
         if(episodeId == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Episode id is required");
         }
@@ -271,6 +284,7 @@ public class EpisodeServiceImpl implements EpisodeService {
 
     @Override
     public Map<UUID, List<String>> getIdAndGenreFromUrl(String url) {
+        String role = userInfo.getRole();
         Map<UUID, List<String>> idAndGenre = new HashMap<>();
         Episode episode = episodeRepository.findByUrl(url).orElseThrow(() -> {
                //F_LOG.warn("{} tried to book a workout with id {} that doesn't exist.", role, workoutToBook.getId());
