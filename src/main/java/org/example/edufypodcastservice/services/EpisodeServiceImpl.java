@@ -14,7 +14,6 @@ import org.example.edufypodcastservice.repositories.EpisodeRepository;
 import org.example.edufypodcastservice.repositories.PodcastRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -48,18 +47,23 @@ public class EpisodeServiceImpl implements EpisodeService {
         String role = userInfo.getRole();
         Episode episode = new Episode();
         if (episodeDto.getTitle() == null || episodeDto.getTitle().isBlank()) {
+            F_LOG.warn("{} tried to add an episode without a title.", role);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Title is required");
         }
         if (episodeDto.getUrl() == null || episodeDto.getUrl().isBlank()) {
+            F_LOG.warn("{} tried to add an episode without an url.", role);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Url is required");
         }
         if (episodeDto.getDescription() == null || episodeDto.getDescription().isBlank()) {
+            F_LOG.warn("{} tried to add an episode without an description.", role);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Description is required");
         }
         if (episodeDto.getDurationSeconds() == null) {
+            F_LOG.warn("{} tried to add an episode without duration.", role);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Duration is required");
         }
         if (episodeDto.getPodcast() != null) {
+            F_LOG.warn("{} tried to add an episode podcastDto instead of podcastId.", role);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "PodcastId, not podcastDto, is required");
         }
         if (episodeDto.getThumbnailUrl() != null && !episodeDto.getThumbnailUrl().isBlank()) {
@@ -73,10 +77,11 @@ public class EpisodeServiceImpl implements EpisodeService {
             episode.setImageUrl("https://default/image.url");
         }
         if (episodeDto.getPodcastId() == null) {
+            F_LOG.warn("{} tried to add an episode without podcastId.", role);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "PodcastId is required");
         }
         Podcast podcast = podcastRepository.findById(episodeDto.getPodcastId()).orElseThrow(() -> {
-            //   F_LOG.warn("{} tried to book a workout with id {} that doesn't exist.", role, workoutToBook.getId());
+            F_LOG.warn("{} tried to retrieve a podcast with id {} that doesn't exist.", role, episodeDto.getPodcastId());
             return new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
                     String.format("No podcast exists with id: %s.", episodeDto.getPodcast())
@@ -89,6 +94,8 @@ public class EpisodeServiceImpl implements EpisodeService {
         episode.setReleaseDate(LocalDate.now());
         episode.setPodcast(podcast);
         podcast.getEpisodes().add(episode);
+
+        F_LOG.info("{} added a episode with id {}.", role, episode.getId());
         return episodeRepository.save(episode);
     }
 
@@ -97,10 +104,11 @@ public class EpisodeServiceImpl implements EpisodeService {
     public Episode updateEpisode(EpisodeDto episodeDto) {
         String role = userInfo.getRole();
         if(episodeDto.getId() == null) {
+            F_LOG.warn("{} tried to retrieve an episode without providing an id {}.", role, episodeDto.getPodcastId());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Episode id is required");
         }
         Episode episode = episodeRepository.findById(episodeDto.getId()).orElseThrow(() -> {
-            //   F_LOG.warn("{} tried to book a workout with id {} that doesn't exist.", role, workoutToBook.getId());
+            F_LOG.warn("{} tried to retrieve an episode with id {} that doesn't exist.", role, episodeDto.getPodcastId());
             return new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
                     String.format("No episode exists with id: %s.", episodeDto.getId())
@@ -109,7 +117,7 @@ public class EpisodeServiceImpl implements EpisodeService {
 
         if (episodeDto.getTitle() != null && !episodeDto.getTitle().equals(episode.getTitle())) {
             if(episodeDto.getTitle().isBlank()) {
-               // F_LOG.warn("{} tried to update a workout with invalid title.", role);
+                F_LOG.warn("{} tried to update an episode with invalid title.", role);
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
                         "Title can not be left blank."
@@ -119,7 +127,7 @@ public class EpisodeServiceImpl implements EpisodeService {
         }
         if (episodeDto.getUrl() != null && !episodeDto.getUrl().equals(episode.getUrl())) {
             if(episodeDto.getUrl().isBlank()) {
-               // F_LOG.warn("{} tried to update a workout with invalid title.", role);
+                F_LOG.warn("{} tried to update an episode with invalid url.", role);
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
                         "Url can not be left blank."
@@ -129,7 +137,7 @@ public class EpisodeServiceImpl implements EpisodeService {
         }
         if (episodeDto.getDescription() != null && !episodeDto.getDescription().equals(episode.getDescription())) {
             if(episodeDto.getDescription().isBlank()) {
-               // F_LOG.warn("{} tried to update a workout with invalid title.", role);
+                F_LOG.warn("{} tried to update an episode with invalid description.", role);
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
                         "Description can not be left blank."
@@ -141,7 +149,7 @@ public class EpisodeServiceImpl implements EpisodeService {
             episode.setDurationSeconds(episodeDto.getDurationSeconds());
         }
         if (episodeDto.getReleaseDate() != null && !episodeDto.getReleaseDate().equals(episode.getReleaseDate())) {
-            // F_LOG.warn("{} tried to update a workout with invalid title.", role);
+            F_LOG.warn("{} tried to update an episodes release date, which is not allowed.", role);
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Release date can not be changed."
@@ -156,7 +164,7 @@ public class EpisodeServiceImpl implements EpisodeService {
         if (episodeDto.getPodcastId() != null && !episodeDto.getPodcastId().equals(episode.getPodcast().getId())) {
             episode.getPodcast().getEpisodes().remove(episode);
             Podcast podcast = podcastRepository.findById(episodeDto.getPodcastId()).orElseThrow(() -> {
-                //   F_LOG.warn("{} tried to book a workout with id {} that doesn't exist.", role, workoutToBook.getId());
+                F_LOG.warn("{} tried to retrieve a podcast with id {} that doesn't exist.", role, episodeDto.getPodcastId());
                 return new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
                         String.format("No podcast exists with id: %s.", episodeDto.getPodcast())
@@ -165,6 +173,8 @@ public class EpisodeServiceImpl implements EpisodeService {
             episode.setPodcast(podcast);
             podcast.getEpisodes().add(episode);
         }
+
+        F_LOG.info("{} updated an episode with id {}.", role, episode.getId());
         return episodeRepository.save(episode);
     }
 
@@ -173,18 +183,22 @@ public class EpisodeServiceImpl implements EpisodeService {
     public String deleteEpisode(UUID episodeId) {
         String role = userInfo.getRole();
         if (episodeId == null) {
+            F_LOG.warn("{} tried to delete an episode without providing an id.", role);
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Id must be provided"
             );
         }
         if (!episodeRepository.existsById(episodeId)) {
+            F_LOG.warn("{} tried to delete an episode with id {} that doesn't exist.", role, episodeId);
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
                     String.format("No episode exists with id: %s.", episodeId)
             );
         }
         episodeRepository.deleteById(episodeId);
+
+        F_LOG.info("{} deleted episode with id:", role, episodeId);
         return String.format("Episode with Id: %s has been successfully deleted.", episodeId);
     }
 
@@ -192,18 +206,21 @@ public class EpisodeServiceImpl implements EpisodeService {
     public EpisodeDto getEpisode(UUID episodeId) {
         String role = userInfo.getRole();
         if (episodeId == null) {
+            F_LOG.warn("{} tried to retrieve an episode without providing an id.", role);
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Id must be provided"
             );
         }
         Episode episode = episodeRepository.findById(episodeId).orElseThrow(() -> {
-            //   F_LOG.warn("{} tried to book a workout with id {} that doesn't exist.", role, workoutToBook.getId());
+            F_LOG.warn("{} tried to retrieve an episode with id {} that doesn't exist.", role, episodeId);
             return new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
                     String.format("No episode exists with id: %s.", episodeId)
             );
         });
+
+        F_LOG.info("{} retrieved an episode with id {}.", role, episodeId);
         return fullDtoConverter.convertToFullEpisodeDto(episode);
     }
 
@@ -214,6 +231,8 @@ public class EpisodeServiceImpl implements EpisodeService {
         for (Episode episode : episodes) {
             episodeDtos.add(fullDtoConverter.convertToFullEpisodeDto(episode));
         }
+
+        F_LOG.info("{} retrieved all episodes.", userInfo.getRole());
         return episodeDtos;
     }
 
@@ -224,12 +243,15 @@ public class EpisodeServiceImpl implements EpisodeService {
         for (Episode episode : episodes) {
             episodeDtos.add(limitedDtoConverter.convertToLimitedEpisodeDto(episode));
         }
+
+        F_LOG.info("{} retrieved episodes associated with podcastId {}.", userInfo.getRole(), podcastId);
         return episodeDtos;
     }
 
     @Override
     public Boolean episodeExists(UUID episodeId) {
         boolean exists = episodeRepository.existsById(episodeId);
+        F_LOG.info("{} checked if episode exists", userInfo.getRole());
         return exists;
     }
 
@@ -237,13 +259,15 @@ public class EpisodeServiceImpl implements EpisodeService {
     public EpisodeDto addSeasonToEpisode(UUID episodeId, UUID seasonId) {
         String role = userInfo.getRole();
         if(episodeId == null) {
+            F_LOG.warn("{} tried to add a season without providing episodeId.", role);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Episode id is required");
         }
         if(seasonId == null) {
+            F_LOG.warn("{} tried to add a season without providing seasonId.", role);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Season id is required");
         }
         Episode episode = episodeRepository.findById(episodeId).orElseThrow(() -> {
-            //   F_LOG.warn("{} tried to book a workout with id {} that doesn't exist.", role, workoutToBook.getId());
+            F_LOG.warn("{} tried to retrieve an episode with id {} that doesn't exist.", role, episodeId);
             return new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
                     String.format("No episode exists with id: %s.", episodeId)
@@ -254,6 +278,8 @@ public class EpisodeServiceImpl implements EpisodeService {
             episode.setSeasonId(seasonId);
             episodeRepository.save(episode);
         }
+
+        F_LOG.info("{} added a season to episode with {}.", role, episodeId);
         return fullDtoConverter.convertToFullEpisodeDto(episode);
     }
 
@@ -261,13 +287,15 @@ public class EpisodeServiceImpl implements EpisodeService {
     public EpisodeDto removeSeasonFromEpisode(UUID episodeId, UUID seasonId) {
         String role = userInfo.getRole();
         if(episodeId == null) {
+            F_LOG.warn("{} tried to remove a season without providing episodeId.", role);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Episode id is required");
         }
         if(seasonId == null) {
+            F_LOG.warn("{} tried to remove a season without providing seasonId.", role);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Season id is required");
         }
         Episode episode = episodeRepository.findById(episodeId).orElseThrow(() -> {
-            //   F_LOG.warn("{} tried to book a workout with id {} that doesn't exist.", role, workoutToBook.getId());
+            F_LOG.warn("{} tried to retrieve an episode with id {} that doesn't exist.", role, episodeId);
             return new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
                     String.format("No episode exists with id: %s.", episodeId)
@@ -277,8 +305,11 @@ public class EpisodeServiceImpl implements EpisodeService {
             episode.setSeasonId(null);
             episodeRepository.save(episode);
         } else {
+            F_LOG.warn("{} tried to remove a seasonId is not currently assigned to episode with id {}.", role, episodeId);
             throw new ResponseStatusException(HttpStatus.CONFLICT, "SeasonId is not currently assigned to episode");
         }
+
+        F_LOG.info("{} added removed season from episode with {}.", role, episodeId);
         return limitedDtoConverter.convertToLimitedEpisodeDto(episode);
     }
 
@@ -287,7 +318,7 @@ public class EpisodeServiceImpl implements EpisodeService {
         String role = userInfo.getRole();
         Map<UUID, List<String>> idAndGenre = new HashMap<>();
         Episode episode = episodeRepository.findByUrl(url).orElseThrow(() -> {
-               //F_LOG.warn("{} tried to book a workout with id {} that doesn't exist.", role, workoutToBook.getId());
+            F_LOG.warn("{} tried to retrieve an episode with url {} that doesn't exist.", role, url);
             return new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
                     String.format("No episode exists with url: %s.", url)
@@ -301,7 +332,7 @@ public class EpisodeServiceImpl implements EpisodeService {
 
         idAndGenre.put(episode.getId(), genreNames);
 
+        F_LOG.info("{} retrieved an episode with url {}.", role, url);
         return idAndGenre;
-
     }
 }

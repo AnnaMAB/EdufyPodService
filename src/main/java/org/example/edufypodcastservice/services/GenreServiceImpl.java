@@ -41,9 +41,9 @@ public class GenreServiceImpl implements GenreService {
     @Transactional
     @Override
     public Genre addGenre(GenreDto genreDto) {
-        String role = userInfo.getRole();
         Genre genre = new Genre();
         if (genreDto.getName() == null || genreDto.getName().isBlank()) {
+            F_LOG.warn("{} tried to add a genre without a name.", userInfo.getRole());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name is required");
         }
         if (genreDto.getImageUrl() != null || !genreDto.getImageUrl().isBlank()) {
@@ -57,12 +57,15 @@ public class GenreServiceImpl implements GenreService {
             genre.setThumbnailUrl("https://default/thumbnail.url");
         }
         if (genreDto.getPodcasts() != null && !genreDto.getPodcasts().isEmpty()) {
+            F_LOG.warn("{} tried to add podcast to a genre from the wrong endpoint.", userInfo.getRole());
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Podcasts can not be added from this page."
             );
         }
         genre.setName(genreDto.getName());
+
+        F_LOG.info("{} added a genre with id {}.", userInfo.getRole(), genre.getId());
         return genreRepository.save(genre);
     }
 
@@ -71,10 +74,11 @@ public class GenreServiceImpl implements GenreService {
     public Genre updateGenre(GenreDto genreDto) {
         String role = userInfo.getRole();
         if(genreDto.getId() == null) {
+            F_LOG.warn("{} tried to update a genre without providing an id.", role);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Genre id is required");
         }
         Genre genre = genreRepository.findById(genreDto.getId()).orElseThrow(() -> {
-            //   F_LOG.warn("{} tried to book a workout with id {} that doesn't exist.", role, workoutToBook.getId());
+            F_LOG.warn("{} tried to retrieve a season with id {} that doesn't exist.", role, genreDto.getId());
             return new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
                     String.format("No genre exists with id: %s.", genreDto.getId())
@@ -82,6 +86,7 @@ public class GenreServiceImpl implements GenreService {
         });
         if (genreDto.getName() != null && !genreDto.getName().equals(genre.getName())) {
             if (genreDto.getName().isBlank()){
+                F_LOG.warn("{} tried to update a genre with invalid name.", role);
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name is required");
             }
             genre.setName(genreDto.getName());
@@ -93,11 +98,14 @@ public class GenreServiceImpl implements GenreService {
             genre.setThumbnailUrl(genreDto.getThumbnailUrl());
         }
         if (genreDto.getPodcasts() != null && !genreDto.getPodcasts().isEmpty()) {
+            F_LOG.warn("{} tried to add podcast to a genre from the wrong endpoint.", role);
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Podcasts can not be added from this page."
             );
         }
+
+        F_LOG.info("{} updated a genre with id {}.", role, genre.getId());
         return genreRepository.save(genre);
     }
 
@@ -106,18 +114,22 @@ public class GenreServiceImpl implements GenreService {
     public String deleteGenre(UUID genreId) {
         String role = userInfo.getRole();
         if (genreId == null) {
+            F_LOG.warn("{} tried to delete a genre without providing an id.", role);
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Id must be provided"
             );
         }
         if (!genreRepository.existsById(genreId)) {
+            F_LOG.warn("{} tried to delete a genre with id {} that doesn't exist.", role, genreId);
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
                     String.format("No genre exists with id: %s.", genreId)
             );
         }
         genreRepository.deleteById(genreId);
+
+        F_LOG.info("{} deleted genre with id:", role, genreId);
         return String.format("Genre with Id: %s has been successfully deleted.", genreId);
     }
 
@@ -128,25 +140,29 @@ public class GenreServiceImpl implements GenreService {
         for (Genre genre : Genre) {
             genresDto.add(limitedDtoConverter.convertToLimitedGenreDto(genre));
         }
+
+        F_LOG.info("{} retrieved all genres.", userInfo.getRole());
         return genresDto;
     }
 
     @Override
-    public GenreDto getGenreById(UUID id) {
+    public GenreDto getGenreById(UUID genreId) {
         String role = userInfo.getRole();
-        if (id == null) {
+        if (genreId == null) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Id must be provided"
             );
         }
-        Genre genre = genreRepository.findById(id).orElseThrow(() -> {
-         //   F_LOG.warn("{} tried to book a workout with id {} that doesn't exist.", role, workoutToBook.getId());
+        Genre genre = genreRepository.findById(genreId).orElseThrow(() -> {
+            F_LOG.warn("{} tried to retrieve a genre with id {} that doesn't exist.", role, genreId);
             return new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
-                    String.format("No genre exists with id: %s.", id)
+                    String.format("No genre exists with id: %s.", genreId)
             );
         });
+
+        F_LOG.info("{} retrieved genre with id {}.", role, genreId);
         return fullDtoConverter.convertToFullGenreDto(genre);
     }
 }

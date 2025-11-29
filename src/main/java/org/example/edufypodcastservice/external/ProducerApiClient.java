@@ -40,12 +40,20 @@ public class ProducerApiClient {
     public boolean producerExists(UUID producerId) {
         String role = userInfo.getRole();
         try {
-            Boolean producerExistsResponse = restClient.get()
+            ResponseEntity<Boolean> producerExistsResponse = restClient.get()
                     .uri(producerExistsApiUrl, producerId)
                     .retrieve()
-                    .body(Boolean.class);
-            return producerExistsResponse;
+                    .toEntity(Boolean.class);
+            if (producerExistsResponse.getStatusCode().is2xxSuccessful() && producerExistsResponse.getBody() != null) {
+                F_LOG.info("{} successfully checked if producer exists.", role);
+                return producerExistsResponse.getBody();
+            } else {
+                F_LOG.warn("{}: Producer exist check failed: {}", role, producerExistsResponse.getStatusCode());
+                throw new IllegalStateException(
+                        producerExistsResponse.getStatusCode().toString());
+            }
         } catch (RestClientException e) {
+            F_LOG.warn("{}: Producer exist check failed: {}", role, e.getMessage());
             throw new IllegalStateException("Failed to check producer " + producerId, e);
         }
     }
@@ -58,6 +66,13 @@ public class ProducerApiClient {
                     .uri(producerRemoveApiUrl, producerId, podcastId)
                     .retrieve()
                     .toBodilessEntity();
+            if (response.getStatusCode().is2xxSuccessful()) {
+                F_LOG.info("{} successfully removed podcast from producer.", role);
+            } else {
+                F_LOG.warn("{}: Failed to remove podcast from producer. error: {}", role, response.getStatusCode());
+                throw new IllegalStateException(
+                        response.getStatusCode().toString());
+            }
         } catch (HttpClientErrorException e) {
             HttpStatusCode status = e.getStatusCode();
             String body = e.getResponseBodyAsString();
@@ -68,15 +83,19 @@ public class ProducerApiClient {
                 String message = json.path("message").asText();
                 String path = json.path("path").asText();
 
+                F_LOG.warn("{}: Failed to remove podcast from producer. error: {}", role, message);
                 throw new IllegalStateException(
                         String.format("Failed to remove podcast from producer. Status %s, %s, Path:%s",
                                 status, message, path), e);
             } catch (IOException parseEx) {
+                F_LOG.warn("{}: Failed to remove podcast from producer. error: {}", role, parseEx.getMessage());
                 throw new IllegalStateException("Failed to remove podcast from producer. Status=" + status + " body=" + body, e);
             }
         } catch (ResourceAccessException ex) {
+            F_LOG.warn("{}: Failed to remove podcast from producer. error: {}", role, ex.getMessage());
             throw new IllegalStateException("Could not connect to producer service: " + ex.getMessage(), ex);
         } catch (RestClientException ex) {
+            F_LOG.warn("{}: Failed to remove podcast from producer. error: {}", role, ex.getMessage());
             throw new IllegalStateException("Unexpected error calling producer service", ex);
         }
     }
@@ -89,6 +108,13 @@ public class ProducerApiClient {
                     .uri(producerAddApiUrl, producerId, podcastId)
                     .retrieve()
                     .toBodilessEntity();
+            if (response.getStatusCode().is2xxSuccessful()) {
+                F_LOG.info("{} successfully added podcast to producer.", role);
+            } else {
+                F_LOG.warn("{}: Failed to add podcast to producer. error: {}", role, response.getStatusCode());
+                throw new IllegalStateException(
+                        response.getStatusCode().toString());
+            }
         } catch (HttpClientErrorException e) {
             HttpStatusCode status = e.getStatusCode();
             String body = e.getResponseBodyAsString();
@@ -99,15 +125,19 @@ public class ProducerApiClient {
                 String message = json.path("message").asText();
                 String path = json.path("path").asText();
 
+                F_LOG.warn("{}: Failed to add podcast to producer. error: {}", role, message);
                 throw new IllegalStateException(
                         String.format("Failed to add podcast to producer. Status %s, %s, Path:%s",
                                 status, message, path), e);
             } catch (IOException parseEx) {
+                F_LOG.warn("{}: Failed to add podcast to producer. error: {}", role, parseEx.getMessage());
                 throw new IllegalStateException("Failed to add podcast to producer . Status=" + status + " body=" + body, e);
             }
         } catch (ResourceAccessException ex) {
+            F_LOG.warn("{}: Failed to add podcast to producer. error: {}", role, ex.getMessage());
             throw new IllegalStateException("Could not connect to producer service: " + ex.getMessage(), ex);
         } catch (RestClientException ex) {
+            F_LOG.warn("{}: Failed to add podcast to producer. error: {}", role, ex.getMessage());
             throw new IllegalStateException("Unexpected error calling producer service", ex);
         }
     }
