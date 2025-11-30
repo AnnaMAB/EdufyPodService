@@ -71,7 +71,7 @@ class PodcastServiceImplTest {
                 podcastRepositoryMock, fullDtoConverter, genreRepositoryMock, producerApiClientMock, userInfoMock
         );
 
-        //when(userInfoMock.getRole()).thenReturn("TEST_ROLE");
+        when(userInfoMock.getRole()).thenReturn("TEST_ROLE");
 
         genre = new Genre();
         genre.setId(genreId);

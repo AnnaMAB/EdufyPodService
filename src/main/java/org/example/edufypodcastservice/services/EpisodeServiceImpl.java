@@ -84,7 +84,7 @@ public class EpisodeServiceImpl implements EpisodeService {
             F_LOG.warn("{} tried to retrieve a podcast with id {} that doesn't exist.", role, episodeDto.getPodcastId());
             return new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
-                    String.format("No podcast exists with id: %s.", episodeDto.getPodcast())
+                    String.format("No podcast exists with id: %s.", episodeDto.getPodcastId())
             );
         });
         episode.setTitle(episodeDto.getTitle());
@@ -95,8 +95,9 @@ public class EpisodeServiceImpl implements EpisodeService {
         episode.setPodcast(podcast);
         podcast.getEpisodes().add(episode);
 
-        F_LOG.info("{} added a episode with id {}.", role, episode.getId());
-        return episodeRepository.save(episode);
+        Episode savedEpisode = episodeRepository.save(episode);
+        F_LOG.info("{} added a episode with id {}.", role, savedEpisode.getId());
+        return savedEpisode;
     }
 
     @Transactional
@@ -167,7 +168,7 @@ public class EpisodeServiceImpl implements EpisodeService {
                 F_LOG.warn("{} tried to retrieve a podcast with id {} that doesn't exist.", role, episodeDto.getPodcastId());
                 return new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
-                        String.format("No podcast exists with id: %s.", episodeDto.getPodcast())
+                        String.format("No podcast exists with id: %s.", episodeDto.getPodcastId())
                 );
             });
             episode.setPodcast(podcast);
@@ -251,7 +252,7 @@ public class EpisodeServiceImpl implements EpisodeService {
     @Override
     public Boolean episodeExists(UUID episodeId) {
         boolean exists = episodeRepository.existsById(episodeId);
-        F_LOG.info("{} checked if episode exists", userInfo.getRole());
+        F_LOG.info("{} checked if episode exists.", userInfo.getRole());
         return exists;
     }
 
@@ -273,7 +274,6 @@ public class EpisodeServiceImpl implements EpisodeService {
                     String.format("No episode exists with id: %s.", episodeId)
             );
         });
-        System.out.println(seasonId);
         if (episode.getSeasonId() == null || !episode.getSeasonId().equals(seasonId)) {
             episode.setSeasonId(seasonId);
             episodeRepository.save(episode);

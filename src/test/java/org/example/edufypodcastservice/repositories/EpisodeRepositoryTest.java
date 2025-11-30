@@ -1,18 +1,27 @@
 package org.example.edufypodcastservice.repositories;
 
+import org.example.edufypodcastservice.converters.UserInfo;
+import org.example.edufypodcastservice.dto.EpisodeDto;
 import org.example.edufypodcastservice.entities.Episode;
 import org.example.edufypodcastservice.entities.Podcast;
+import org.example.edufypodcastservice.mapper.FullDtoConverter;
+import org.example.edufypodcastservice.mapper.LimitedDtoConverter;
+import org.example.edufypodcastservice.services.EpisodeServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
 
 @ActiveProfiles("test")
 @DataJpaTest
@@ -86,6 +95,30 @@ class EpisodeRepositoryTest {
 
         assertThat(episodesForPodcast1.get(0).getTitle()).isEqualTo("Episode 1");
         assertThat(episodesForPodcast1.get(1).getTitle()).isEqualTo("Episode 2");
-
     }
+
+    @Test
+    void testFindAllByPodcastId_NoEpisodesFound() {
+        UUID randomId = UUID.randomUUID();
+
+        List<Episode> result = episodeRepository.findAllByPodcast_Id(randomId);
+
+        assertThat(result.size()).isEqualTo(0);
+    }
+
+    @Test
+    void testFindByUrl() {
+        Optional<Episode> found = episodeRepository.findByUrl("url2");
+
+        assertThat(found).isPresent();
+        assertThat(found.get().getTitle()).isEqualTo("Episode 2");
+    }
+
+    @Test
+    void testFindByUrl_NotFound() {
+        Optional<Episode> found = episodeRepository.findByUrl("non-existing-url");
+
+        assertThat(found).isEmpty();
+    }
+
 }
