@@ -46,12 +46,12 @@ public class GenreServiceImpl implements GenreService {
             F_LOG.warn("{} tried to add a genre without a name.", userInfo.getRole());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name is required");
         }
-        if (genreDto.getImageUrl() != null || !genreDto.getImageUrl().isBlank()) {
+        if (genreDto.getImageUrl() != null && !genreDto.getImageUrl().isBlank()) {
             genre.setImageUrl(genreDto.getImageUrl());
         }else {
             genre.setImageUrl("https://default/image.url");
         }
-        if (genreDto.getThumbnailUrl() != null || !genreDto.getThumbnailUrl().isBlank()) {
+        if (genreDto.getThumbnailUrl() != null && !genreDto.getThumbnailUrl().isBlank()) {
             genre.setThumbnailUrl(genreDto.getThumbnailUrl());
         }else {
             genre.setThumbnailUrl("https://default/thumbnail.url");
@@ -91,10 +91,10 @@ public class GenreServiceImpl implements GenreService {
             }
             genre.setName(genreDto.getName());
         }
-        if (genreDto.getImageUrl() != null || !genreDto.getImageUrl().equals(genre.getImageUrl())) {
+        if (genreDto.getImageUrl() != null && !genreDto.getImageUrl().equals(genre.getImageUrl())) {
             genre.setImageUrl(genreDto.getImageUrl());
         }
-        if (genreDto.getThumbnailUrl() != null || !genreDto.getThumbnailUrl().equals(genre.getThumbnailUrl())) {
+        if (genreDto.getThumbnailUrl() != null && !genreDto.getThumbnailUrl().equals(genre.getThumbnailUrl())) {
             genre.setThumbnailUrl(genreDto.getThumbnailUrl());
         }
         if (genreDto.getPodcasts() != null && !genreDto.getPodcasts().isEmpty()) {
