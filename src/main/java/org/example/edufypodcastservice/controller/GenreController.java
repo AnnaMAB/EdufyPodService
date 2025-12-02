@@ -25,32 +25,32 @@ public class GenreController {
         this.genreService = genreService;
     }
 
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @PreAuthorize("hasAnyRole('edufy_User','edufy_Admin')")
     @GetMapping("/getgenre/{id}")
     public ResponseEntity<GenreDto> getGenreById(@PathVariable UUID id) {
         return ResponseEntity.ok(genreService.getGenreById(id));
     }
 
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @PreAuthorize("hasAnyRole('edufy_User','edufy_Admin')")
     @GetMapping("/allgenres")
     public ResponseEntity<List<GenreDto>> getAllGenres() {
         return ResponseEntity.ok(genreService.getAllGenres());
     }
 
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('edufy_Admin')")
     @PostMapping("/addgenre")
     public ResponseEntity<Genre> addGenre(@RequestBody GenreDto genreDto) {
         return ResponseEntity.ok(genreService.addGenre(genreDto));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('edufy_Admin')")
     @PutMapping("/updategenre")
     public ResponseEntity<Genre> updateGenre(@RequestBody GenreDto genreDto) {
         return ResponseEntity.ok(genreService.updateGenre(genreDto));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('edufy_Admin')")
     @DeleteMapping("/deletegenre/{id}")
     public ResponseEntity<String> deleteGenre(@PathVariable UUID id) {
         return ResponseEntity.ok(genreService.deleteGenre(id));

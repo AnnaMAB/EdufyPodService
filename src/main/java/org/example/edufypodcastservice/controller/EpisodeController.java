@@ -25,63 +25,63 @@ public class EpisodeController {
         this.episodeService = episodeService;
     }
 
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @PreAuthorize("hasAnyRole('edufy_User','edufy_Admin')")
     @GetMapping("/getepisode/{id}")
     public ResponseEntity<EpisodeDto> getEpisodeById(@PathVariable UUID id) {
         return ResponseEntity.ok(episodeService.getEpisode(id));
     }
 
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @PreAuthorize("hasAnyRole('edufy_User','edufy_Admin')")
     @GetMapping("/allepisodes")
     public ResponseEntity<List<EpisodeDto>> getAllEpisodes() {
         return ResponseEntity.ok(episodeService.getAllEpisodes());
     }
 
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @PreAuthorize("hasAnyRole('edufy_User','edufy_Admin')")
     @GetMapping("/getpodcastepisodes/{podcastId}")
     public ResponseEntity<List<EpisodeDto>> getEpisodesByPodcast(@PathVariable UUID podcastId) {
         return ResponseEntity.ok(episodeService.getEpisodesByPodcastId(podcastId));
     }
 
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @PreAuthorize("hasAnyRole('edufy_User','edufy_Admin')")
     @GetMapping("/getidandgenrefromurl")
     public ResponseEntity<Map<UUID, List<String>>> getIdAndGenreFromUrl(@RequestParam String url) {
         return ResponseEntity.ok(episodeService.getIdAndGenreFromUrl(url));
     }
 
 
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @PreAuthorize("hasAnyRole('edufy_User','edufy_Admin')")
     @GetMapping("/{id}/exists")
     public ResponseEntity<Boolean> episodeExists(@PathVariable UUID id) {
         return ResponseEntity.ok(episodeService.episodeExists(id));
     }
 
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('edufy_Admin')")
     @PostMapping("/addepisode")
     public ResponseEntity<Episode> addEpisode(@RequestBody EpisodeDto episodeDto) {
         return ResponseEntity.ok(episodeService.addEpisode(episodeDto));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('edufy_Admin')")
     @PutMapping("/updateepisode")
     public ResponseEntity<Episode> updateEpisode(@RequestBody EpisodeDto episodeDto) {
         return ResponseEntity.ok(episodeService.updateEpisode(episodeDto));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('edufy_Admin')")
     @DeleteMapping("/deleteepisode/{id}")
     public ResponseEntity<String> deleteEpisode(@PathVariable UUID id) {
         return ResponseEntity.ok(episodeService.deleteEpisode(id));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('edufy_Admin')")
     @PutMapping("/addseasontoepisode/{episodeId}/{seasonId}")
     public ResponseEntity<EpisodeDto> addSeasonToEpisode(@PathVariable UUID episodeId, @PathVariable UUID seasonId) {
         return ResponseEntity.ok(episodeService.addSeasonToEpisode(episodeId, seasonId));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('edufy_Admin')")
     @PutMapping("/removeseasonfromepisode/{episodeId}/{seasonId}")
     public ResponseEntity<EpisodeDto> removeSeasonFromEpisode(@PathVariable UUID episodeId, @PathVariable UUID seasonId) {
         return ResponseEntity.ok(episodeService.removeSeasonFromEpisode(episodeId, seasonId));
