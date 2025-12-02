@@ -1,7 +1,6 @@
 package org.example.edufypodcastservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.persistence.Column;
 
 import java.time.LocalDate;
 import java.util.UUID;

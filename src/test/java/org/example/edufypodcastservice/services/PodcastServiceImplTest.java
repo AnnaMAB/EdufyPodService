@@ -12,7 +12,6 @@ import org.example.edufypodcastservice.mapper.FullDtoConverter;
 import org.example.edufypodcastservice.mapper.LimitedDtoConverter;
 import org.example.edufypodcastservice.repositories.GenreRepository;
 import org.example.edufypodcastservice.repositories.PodcastRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,7 +27,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
